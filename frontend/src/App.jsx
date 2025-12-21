@@ -1,35 +1,40 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import './App.css'
+import { Routes, Route } from 'react-router-dom';
+import { useEffect } from 'react';
+import Navbar from './components/Navbar';
+import HomePage from './pages/HomePage';
+import SearchPage from './pages/SearchPage';
+import MovieDetails from './pages/MovieDetails';
+import { API_CONFIG } from './config/api';
+
+// Composant pour le débogage de la configuration
+const DebugConfig = () => {
+  useEffect(() => {
+    console.log('Configuration de l\'API:', {
+      baseUrl: API_CONFIG.baseUrl,
+      imageBaseUrl: API_CONFIG.imageBaseUrl,
+      hasApiKey: !!API_CONFIG.apiKey,
+      apiKeyLength: API_CONFIG.apiKey ? API_CONFIG.apiKey.length : 0,
+      language: API_CONFIG.language,
+      endpoints: API_CONFIG.endpoints
+    });
+  }, []);
+  return null;
+};
 
 function App() {
-  const [count, setCount] = useState(0)
-
   return (
-    <>
-      <div>
-        <a href="https://vite.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
+    <div className="min-h-screen bg-dark-bg text-text-primary">
+      <Navbar />
+      <div className="pt-16"> {/* Ajout d'un padding-top pour compenser la navbar fixe */}
+        <DebugConfig />
+        <Routes>
+          <Route path="/" element={<HomePage />} />
+          <Route path="/search" element={<SearchPage />} />
+          <Route path="/movie/:id" element={<MovieDetails />} />
+        </Routes>
       </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.jsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
-    </>
-  )
+    </div>
+  );
 }
 
-export default App
+export default App;
