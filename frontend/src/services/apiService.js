@@ -48,6 +48,18 @@ export const movieService = {
 
   getGenres: async () => {
     return fetchFromApi(endpoints.genre);
+  },
+
+  getFilteredMovies: async (filters = {}, page = 1) => {
+    const { genre, year, minRating, sortBy } = filters;
+    let params = `&page=${page}`;
+    
+    if (genre) params += `&with_genres=${genre}`;
+    if (year) params += `&primary_release_year=${year}`;
+    if (minRating) params += `&vote_average.gte=${minRating}`;
+    if (sortBy) params += `&sort_by=${sortBy}`;
+    
+    return fetchFromApi(endpoints.discover, params);
   }
 };
 
