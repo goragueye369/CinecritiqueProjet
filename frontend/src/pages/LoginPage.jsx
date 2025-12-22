@@ -16,15 +16,26 @@ const LoginPage = () => {
     
     try {
       setLoading(true);
+      console.log('Tentative de connexion avec:', { email, password });
       const result = await login({ email, password });
+      console.log('Résultat de la connexion:', result);
+      
       if (result.success) {
+        console.log('Connexion réussie, redirection...');
         navigate('/');
       } else {
-        setError(result.error || 'Échec de la connexion');
+        const errorMsg = result.error || 'Échec de la connexion';
+        console.error('Erreur de connexion:', errorMsg);
+        setError(errorMsg);
       }
     } catch (err) {
-      setError('Une erreur est survenue lors de la connexion');
-      console.error(err);
+      console.error('Erreur lors de la connexion:', err);
+      console.error('Détails de l\'erreur:', {
+        message: err.message,
+        response: err.response?.data,
+        status: err.response?.status
+      });
+      setError(err.response?.data?.detail || 'Une erreur est survenue lors de la connexion');
     } finally {
       setLoading(false);
     }

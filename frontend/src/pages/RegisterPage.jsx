@@ -31,11 +31,33 @@ const RegisterPage = () => {
 
     try {
       setLoading(true);
-      await new Promise(resolve => setTimeout(resolve, 1000));
-      navigate('/login');
+      
+      const response = await fetch('http://localhost:8000/api/register/', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          username: formData.username,
+          email: formData.email,
+          password: formData.password,
+          password2: formData.confirmPassword
+        })
+      });
+
+      const data = await response.json();
+
+      if (response.ok) {
+        // Inscription réussie
+        console.log('Inscription réussie:', data);
+        navigate('/login');
+      } else {
+        // Erreur du backend
+        setError(data.detail || "Une erreur est survenue lors de l'inscription");
+      }
     } catch (err) {
       setError("Une erreur est survenue lors de l'inscription");
-      console.error(err);
+      console.error('Erreur:', err);
     } finally {
       setLoading(false);
     }

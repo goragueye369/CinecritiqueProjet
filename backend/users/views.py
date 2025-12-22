@@ -1,9 +1,10 @@
-from rest_framework import generics, permissions, status
+from rest_framework import generics, permissions, status, serializers
 from rest_framework.response import Response
 from rest_framework_simplejwt.tokens import RefreshToken
 from rest_framework_simplejwt.views import TokenObtainPairView
+from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 from django.contrib.auth import get_user_model
-from .serializers import RegisterSerializer, UserSerializer, ProfileUpdateSerializer
+from .serializers import RegisterSerializer, UserSerializer, ProfileUpdateSerializer, UserListSerializer
 
 User = get_user_model()
 
@@ -12,21 +13,33 @@ class RegisterView(generics.CreateAPIView):
     permission_classes = [permissions.AllowAny]
     
     def create(self, request, *args, **kwargs):
+        print(f"[DEBUG] Données d'inscription reçues: {request.data}")
         serializer = self.get_serializer(data=request.data)
-        serializer.is_valid(raise_exception=True)
+        print(f"[DEBUG] Serializer valide avant validation: {serializer.is_valid()}")
+        
+        if not serializer.is_valid():
+            print(f"[DEBUG] Erreurs de validation: {serializer.errors}")
+            serializer.is_valid(raise_exception=True)
+        
         user = serializer.save()
+        print(f"[DEBUG] Utilisateur créé avec ID: {user.id}")
+        print(f"[DEBUG] Email de l'utilisateur: {user.email}")
+        print(f"[DEBUG] Mot de passe défini: {'oui' if user.password else 'non'}")
         
         # Generate JWT tokens
         refresh = RefreshToken.for_user(user)
         
-        return Response({
+        response_data = {
             'user': UserSerializer(user).data,
             'tokens': {
                 'refresh': str(refresh),
                 'access': str(refresh.access_token),
             },
             'message': 'Inscription réussie !'
-        }, status=status.HTTP_201_CREATED)
+        }
+        
+        print(f"[DEBUG] Réponse d'inscription: {response_data}")
+        return Response(response_data, status=status.HTTP_201_CREATED)
 
 class LogoutView(generics.GenericAPIView):
     permission_classes = [permissions.IsAuthenticated]
@@ -71,20 +84,84 @@ class UserProfileView(generics.RetrieveUpdateAPIView):
     def update(self, request, *args, **kwargs):
         partial = kwargs.pop('partial', False)
         instance = self.get_object()
-        serializer = self.get_serializer(instance, data=request.data, partial=partial)
+        
+        # Gérer les fichiers multipart
+        if request.content_type and 'multipart/form-data' in request.content_type:
+            serializer = self.get_serializer(instance, data=request.data, partial=partial)
+        else:
+            # Pour les requêtes JSON normales
+            data = request.data.copy()
+            # Supprimer profile_picture si c'est une chaîne vide
+            if 'profile_picture' in data and data['profile_picture'] == '':
+                data.pop('profile_picture')
+            serializer = self.get_serializer(instance, data=data, partial=partial)
+        
         serializer.is_valid(raise_exception=True)
         self.perform_update(serializer)
         
         return Response(UserSerializer(instance).data)
 
-class CustomTokenObtainPairView(TokenObtainPairView):
-    def post(self, request, *args, **kwargs):
-        response = super().post(request, *args, **kwargs)
+class UserListView(generics.ListAPIView):
+    """
+    Vue pour récupérer la liste des utilisateurs
+    Exclut l'utilisateur connecté de la liste
+    """
+    serializer_class = UserListSerializer
+    permission_classes = [permissions.IsAuthenticated]
+    
+    def get_queryset(self):
+        # Récupère tous les utilisateurs sauf l'utilisateur connecté
+        return User.objects.exclude(id=self.request.user.id).order_by('username')
+
+class CustomTokenObtainPairSerializer(TokenObtainPairSerializer):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields['email'] = serializers.EmailField(required=True)
+        self.fields['password'] = serializers.CharField(required=True, style={'input_type': 'password'})
+        # Remove the username field since we're using email
+        self.fields.pop('username', None)
+
+    def validate(self, attrs):
+        # Use email for authentication instead of username
+        email = attrs.get('email')
+        password = attrs.get('password')
         
-        if response.status_code == 200:
-            # Add user data to response
-            user = User.objects.get(email=request.data['email'])
-            user_data = UserSerializer(user).data
-            response.data['user'] = user_data
+        print(f"[DEBUG] Tentative de connexion avec email: {email}")
+        print(f"[DEBUG] Password fourni: {'oui' if password else 'non'}")
+        
+        if not email or not password:
+            print("[DEBUG] Email ou mot de passe manquant")
+            raise serializers.ValidationError({"detail": "L'email et le mot de passe sont obligatoires."})
+        
+        # Try to authenticate the user
+        user = User.objects.filter(email=email).first()
+        
+        print(f"[DEBUG] Utilisateur trouvé: {'oui' if user else 'non'}")
+        if user:
+            print(f"[DEBUG] ID utilisateur: {user.id}")
+            print(f"[DEBUG] Mot de passe valide: {'oui' if user.check_password(password) else 'non'}")
+            print(f"[DEBUG] Compte actif: {'oui' if user.is_active else 'non'}")
+        
+        if user and user.check_password(password):
+            if not user.is_active:
+                print("[DEBUG] Compte désactivé")
+                raise serializers.ValidationError({"detail": "Ce compte est désactivé."})
             
-        return response
+            refresh = self.get_token(user)
+            
+            print(f"[DEBUG] Connexion réussie pour {user.email}")
+            
+            # Retourner la structure attendue par le frontend
+            return {
+                'tokens': {
+                    'refresh': str(refresh),
+                    'access': str(refresh.access_token)
+                },
+                'user': UserSerializer(user).data
+            }
+        
+        print("[DEBUG] Échec de l'authentification")
+        raise serializers.ValidationError({"detail": "Identifiants invalides. Veuillez réessayer."})
+
+class CustomTokenObtainPairView(TokenObtainPairView):
+    serializer_class = CustomTokenObtainPairSerializer
