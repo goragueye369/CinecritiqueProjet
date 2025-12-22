@@ -7,6 +7,7 @@ import LoginPage from './pages/LoginPage';
 import RegisterPage from './pages/RegisterPage';
 import ProfilePage from './pages/ProfilePage';
 import DiscoverUsersPage from './pages/DiscoverUsersPage';
+import PublicProfilePage from './pages/PublicProfilePage';
 
 const PrivateRoute = ({ children }) => {
   const { isAuthenticated } = useAuth();
@@ -38,6 +39,10 @@ function App() {
                     <DiscoverUsersPage />
                   </PrivateRoute>
                 } 
+              />
+              <Route 
+                path="/user/:userId" 
+                element={<PublicProfilePage />} 
               />
               <Route path="*" element={<Navigate to="/" replace />} />
             </Routes>

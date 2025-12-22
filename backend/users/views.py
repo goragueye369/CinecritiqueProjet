@@ -163,5 +163,16 @@ class CustomTokenObtainPairSerializer(TokenObtainPairSerializer):
         print("[DEBUG] Échec de l'authentification")
         raise serializers.ValidationError({"detail": "Identifiants invalides. Veuillez réessayer."})
 
+class UserDetailView(generics.RetrieveAPIView):
+    """
+    Vue pour récupérer les détails d'un utilisateur spécifique
+    Accessible publiquement (pas besoin d'authentification)
+    """
+    serializer_class = UserListSerializer
+    permission_classes = [permissions.AllowAny]
+    
+    def get_queryset(self):
+        return User.objects.all()
+
 class CustomTokenObtainPairView(TokenObtainPairView):
     serializer_class = CustomTokenObtainPairSerializer
