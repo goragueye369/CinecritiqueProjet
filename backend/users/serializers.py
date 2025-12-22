@@ -1,6 +1,8 @@
 from rest_framework import serializers
 from django.contrib.auth import get_user_model
 from django.contrib.auth.password_validation import validate_password
+from django.urls import reverse
+from django.conf import settings
 
 User = get_user_model()
 
@@ -45,6 +47,35 @@ class UserSerializer(serializers.ModelSerializer):
         read_only_fields = ['id', 'date_joined']
 
 class ProfileUpdateSerializer(serializers.ModelSerializer):
+    profile_picture = serializers.ImageField(required=False, allow_null=True)
+    
     class Meta:
         model = User
         fields = ['username', 'bio', 'profile_picture']
+        
+    def validate_username(self, value):
+        user = self.context['request'].user
+        if User.objects.exclude(id=user.id).filter(username=value).exists():
+            raise serializers.ValidationError("Ce pseudo est déjà utilisé.")
+        return value
+    
+    def to_representation(self, instance):
+        data = super().to_representation(instance)
+        # Convertir l'URL relative en URL complète
+        if data.get('profile_picture'):
+            if not data['profile_picture'].startswith('http'):
+                data['profile_picture'] = f"http://localhost:8000{data['profile_picture']}"
+        return data
+
+class UserListSerializer(serializers.ModelSerializer):
+    reviews_count = serializers.SerializerMethodField()
+    
+    class Meta:
+        model = User
+        fields = ['id', 'username', 'bio', 'profile_picture', 'date_joined', 'reviews_count']
+        read_only_fields = fields
+    
+    def get_reviews_count(self, obj):
+        # Cette méthode comptera le nombre de critiques de l'utilisateur
+        # Une fois que vous aurez le modèle Review implémenté
+        return 0  # À remplacer par obj.reviews.count() plus tard
