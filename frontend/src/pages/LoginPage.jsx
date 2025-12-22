@@ -1,11 +1,13 @@
 import React, { useState } from 'react';
-import { useNavigate, Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
+import { useAuth } from '../contexts/AuthContext';
 
 const LoginPage = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
+  const { login } = useAuth();
   const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
@@ -14,9 +16,12 @@ const LoginPage = () => {
     
     try {
       setLoading(true);
-      // Simulation de connexion
-      await new Promise(resolve => setTimeout(resolve, 1000));
-      navigate('/');
+      const result = await login({ email, password });
+      if (result.success) {
+        navigate('/');
+      } else {
+        setError(result.error || 'Échec de la connexion');
+      }
     } catch (err) {
       setError('Une erreur est survenue lors de la connexion');
       console.error(err);
@@ -65,8 +70,15 @@ const LoginPage = () => {
             onChange={(e) => setEmail(e.target.value)}
             required
             style={{
+              width: '100%',
               padding: '12px 15px',
-              fontSize: '1rem'
+              fontSize: '1rem',
+              backgroundColor: 'var(--bg-primary)',
+              border: '1px solid var(--border)',
+              borderRadius: '4px',
+              color: 'var(--text-primary)',
+              boxSizing: 'border-box',
+              outline: 'none'
             }}
           />
         </div>
@@ -79,8 +91,15 @@ const LoginPage = () => {
             onChange={(e) => setPassword(e.target.value)}
             required
             style={{
+              width: '100%',
               padding: '12px 15px',
-              fontSize: '1rem'
+              fontSize: '1rem',
+              backgroundColor: 'var(--bg-primary)',
+              border: '1px solid var(--border)',
+              borderRadius: '4px',
+              color: 'var(--text-primary)',
+              boxSizing: 'border-box',
+              outline: 'none'
             }}
           />
         </div>
@@ -93,8 +112,16 @@ const LoginPage = () => {
             padding: '12px',
             fontSize: '1rem',
             fontWeight: '600',
-            marginBottom: '20px'
+            marginBottom: '20px',
+            backgroundColor: 'var(--accent)',
+            color: '#000',
+            border: 'none',
+            borderRadius: '4px',
+            cursor: 'pointer',
+            transition: 'background-color 0.2s'
           }}
+          onMouseOver={(e) => !loading && (e.target.style.backgroundColor = 'var(--accent-hover)')}
+          onMouseOut={(e) => !loading && (e.target.style.backgroundColor = 'var(--accent)')}
         >
           {loading ? 'Connexion...' : 'Se connecter'}
         </button>
