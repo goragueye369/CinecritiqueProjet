@@ -5,7 +5,8 @@ from .views import (
     LogoutView,
     UserProfileView,
     CustomTokenObtainPairView,
-    UserListView
+    UserListView,
+    UserDetailView
 )
 
 urlpatterns = [
@@ -19,6 +20,7 @@ urlpatterns = [
     
     # Gestion des utilisateurs
     path('users/', UserListView.as_view(), name='user-list'),
+    path('users/<int:pk>/', UserDetailView.as_view(), name='user-detail'),
     
     # Note: L'endpoint /api/token/refresh/ est défini dans config/urls.py
 ]

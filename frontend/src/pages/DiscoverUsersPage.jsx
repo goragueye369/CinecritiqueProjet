@@ -9,7 +9,7 @@ const DiscoverUsersPage = () => {
   const [users, setUsers] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
-  const { user: currentUser, getToken } = useAuth();
+  const { user: currentUser, getToken, isAuthenticated } = useAuth();
 
   useEffect(() => {
     const fetchUsers = async () => {
@@ -18,7 +18,7 @@ const DiscoverUsersPage = () => {
         setError('');
         
         const token = await getToken();
-        const response = await axios.get(`${API_URL}/users/users/`, {
+        const response = await axios.get(`${API_URL}/users/`, {
           headers: {
             'Authorization': `Bearer ${token}`,
             'Content-Type': 'application/json'
@@ -77,7 +77,7 @@ const DiscoverUsersPage = () => {
       setLoading(false);
       setError('Veuillez vous connecter pour voir les autres utilisateurs.');
     }
-  }, [getToken, isAuthenticated, logout]);
+  }, [getToken, isAuthenticated]);
 
   if (loading) {
     return (
