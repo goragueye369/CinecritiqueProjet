@@ -3,8 +3,9 @@ import { useNavigate, Link } from 'react-router-dom';
 
 const ProfilePage = () => {
   const [profile, setProfile] = useState({
-    username: 'Utilisateur',
+    username: '',
     bio: '',
+    email: '',
     avatar: null,
     preview: null
   });
@@ -13,19 +14,50 @@ const ProfilePage = () => {
   const [error, setError] = useState('');
   const navigate = useNavigate();
 
-  // Simuler le chargement du profil utilisateur
+  // Charger le profil utilisateur depuis l'API
   useEffect(() => {
     const loadProfile = async () => {
       try {
         setIsLoading(true);
-        // Ici, vous récupéreriez les données du profil depuis votre API
-        // const response = await fetch('/api/profile');
-        // const data = await response.json();
-        // setProfile(prev => ({ ...prev, ...data }));
-        await new Promise(resolve => setTimeout(resolve, 500));
+        const token = localStorage.getItem('accessToken');
+        
+        console.log('[DEBUG] Token récupéré:', token ? 'oui' : 'non');
+        console.log('[DEBUG] Token value:', token);
+        
+        if (!token) {
+          setError('Token non trouvé. Veuillez vous reconnecter.');
+          return;
+        }
+        
+        const response = await fetch('http://localhost:8000/api/profile/', {
+          headers: {
+            'Authorization': `Bearer ${token}`,
+            'Content-Type': 'application/json',
+          }
+        });
+
+        console.log('[DEBUG] Response status:', response.status);
+        console.log('[DEBUG] Response ok:', response.ok);
+
+        if (response.ok) {
+          const data = await response.json();
+          console.log('[DEBUG] Données profil reçues:', data);
+          setProfile(prev => ({ 
+            ...prev, 
+            username: data.username || '',
+            bio: data.bio || '',
+            email: data.email || '',
+            preview: data.profile_picture || null,
+            date_joined: data.date_joined || null
+          }));
+        } else {
+          const errorText = await response.text();
+          console.log('[DEBUG] Erreur response:', errorText);
+          setError(`Erreur ${response.status}: ${errorText}`);
+        }
       } catch (err) {
+        console.log('[DEBUG] Erreur catch:', err);
         setError('Erreur lors du chargement du profil');
-        console.error(err);
       } finally {
         setIsLoading(false);
       }
@@ -60,18 +92,36 @@ const ProfilePage = () => {
     setError('');
 
     try {
-      // Ici, vous enverriez les données mises à jour à votre API
-      // const formData = new FormData();
-      // formData.append('username', profile.username);
-      // formData.append('bio', profile.bio);
-      // if (profile.avatar) {
-      //   formData.append('avatar', profile.avatar);
-      // }
-      // await fetch('/api/profile', { method: 'POST', body: formData });
-      
-      await new Promise(resolve => setTimeout(resolve, 1000));
-      setIsEditing(false);
-      // Rafraîchir les données du profil
+      const token = localStorage.getItem('accessToken');
+      const formData = new FormData();
+      formData.append('username', profile.username);
+      formData.append('bio', profile.bio);
+      if (profile.avatar && profile.avatar instanceof File) {
+        formData.append('profile_picture', profile.avatar);
+      }
+
+      const response = await fetch('http://localhost:8000/api/profile/', {
+        method: 'PATCH',
+        headers: {
+          'Authorization': `Bearer ${token}`,
+        },
+        body: formData
+      });
+
+      if (response.ok) {
+        const data = await response.json();
+        setProfile(prev => ({ 
+          ...prev, 
+          username: data.username || prev.username,
+          bio: data.bio || prev.bio,
+          avatar: data.profile_picture || prev.avatar,
+          preview: null  // Réinitialiser la preview après enregistrement
+        }));
+        setIsEditing(false);
+      } else {
+        const errorData = await response.json();
+        setError(errorData.detail || 'Erreur lors de la mise à jour du profil');
+      }
     } catch (err) {
       setError('Erreur lors de la mise à jour du profil');
       console.error(err);
@@ -150,7 +200,7 @@ const ProfilePage = () => {
           position: 'relative'
         }}>
           <img 
-            src={profile.preview || 'https://via.placeholder.com/150'} 
+            src={profile.preview ? profile.preview : (profile.avatar ? `http://localhost:8000${profile.avatar}` : 'https://via.placeholder.com/150')} 
             alt="Profil"
             style={{
               width: '100%',
@@ -292,10 +342,38 @@ const ProfilePage = () => {
             <p style={{ 
               color: 'var(--text-secondary)',
               lineHeight: '1.6',
-              fontSize: '1.1rem'
+              fontSize: '1.1rem',
+              marginBottom: '1rem'
             }}>
               {profile.bio || 'Aucune biographie pour le moment.'}
             </p>
+            <div style={{ 
+              color: 'var(--text-secondary)',
+              fontSize: '0.9rem',
+              marginBottom: '1.5rem'
+            }}>
+              <p>Membre depuis {profile.date_joined ? new Date(profile.date_joined).toLocaleDateString('fr-FR', { month: 'long', year: 'numeric' }) : 'Date inconnue'}</p>
+            </div>
+            <div style={{
+              backgroundColor: 'var(--bg-primary)',
+              padding: '1rem',
+              borderRadius: '8px',
+              marginBottom: '1.5rem'
+            }}>
+              <h4 style={{ 
+                color: 'var(--accent)',
+                marginBottom: '0.5rem',
+                fontSize: '1rem'
+              }}>
+                Activité récente
+              </h4>
+              <p style={{ 
+                color: 'var(--text-secondary)',
+                fontSize: '0.9rem'
+              }}>
+                Aucune activité récente pour le moment.
+              </p>
+            </div>
           </div>
 
           <div style={{ textAlign: 'center' }}>

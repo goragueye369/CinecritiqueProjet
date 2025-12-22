@@ -6,6 +6,7 @@ import HomePage from './pages/HomePage';
 import LoginPage from './pages/LoginPage';
 import RegisterPage from './pages/RegisterPage';
 import ProfilePage from './pages/ProfilePage';
+import DiscoverUsersPage from './pages/DiscoverUsersPage';
 
 const PrivateRoute = ({ children }) => {
   const { isAuthenticated } = useAuth();
@@ -31,10 +32,10 @@ function App() {
                 } 
               />
               <Route 
-                path="/" 
+                path="/discover" 
                 element={
                   <PrivateRoute>
-                    <HomePage />
+                    <DiscoverUsersPage />
                   </PrivateRoute>
                 } 
               />
