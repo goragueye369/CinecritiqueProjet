@@ -106,6 +106,33 @@ const Navbar = () => {
                 </svg>
                 Mon Profil
               </Link>
+              <Link 
+                to="/my-reviews"
+                style={{
+                  color: 'var(--accent)',
+                  textDecoration: 'none',
+                  padding: '0.5rem 1rem',
+                  border: '1px solid var(--accent)',
+                  borderRadius: '4px',
+                  transition: 'all 0.2s',
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '0.5rem'
+                }}
+                onMouseOver={(e) => {
+                  e.target.style.backgroundColor = 'var(--accent)';
+                  e.target.style.color = '#000';
+                }}
+                onMouseOut={(e) => {
+                  e.target.style.backgroundColor = 'transparent';
+                  e.target.style.color = 'var(--accent)';
+                }}
+              >
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+                  <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/>
+                </svg>
+                Mes Critiques
+              </Link>
               <button
                 onClick={handleLogout}
                 style={{

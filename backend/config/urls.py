@@ -47,6 +47,7 @@ urlpatterns = [
     path('api/', include([
         path('', api_home_view, name='api_home'),
         path('', include('users.urls')),
+        path('reviews/', include('reviews.urls')),
     ])),
     
     # Endpoint de rafraîchissement du token

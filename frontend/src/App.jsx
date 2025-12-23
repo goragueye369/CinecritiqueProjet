@@ -8,6 +8,9 @@ import RegisterPage from './pages/RegisterPage';
 import ProfilePage from './pages/ProfilePage';
 import DiscoverUsersPage from './pages/DiscoverUsersPage';
 import PublicProfilePage from './pages/PublicProfilePage';
+import CreateReviewPage from './pages/CreateReviewPage';
+import MyReviewsPage from './pages/MyReviewsPage';
+import EditReviewPage from './pages/EditReviewPage';
 
 const PrivateRoute = ({ children }) => {
   const { isAuthenticated } = useAuth();
@@ -22,6 +25,7 @@ function App() {
           <Navbar />
           <div style={{ padding: '2rem' }}>
             <Routes>
+              <Route path="/" element={<HomePage />} />
               <Route path="/login" element={<LoginPage />} />
               <Route path="/register" element={<RegisterPage />} />
               <Route 
@@ -43,6 +47,30 @@ function App() {
               <Route 
                 path="/user/:userId" 
                 element={<PublicProfilePage />} 
+              />
+              <Route 
+                path="/create-review" 
+                element={
+                  <PrivateRoute>
+                    <CreateReviewPage />
+                  </PrivateRoute>
+                } 
+              />
+              <Route 
+                path="/my-reviews" 
+                element={
+                  <PrivateRoute>
+                    <MyReviewsPage />
+                  </PrivateRoute>
+                } 
+              />
+              <Route 
+                path="/edit-review/:reviewId" 
+                element={
+                  <PrivateRoute>
+                    <EditReviewPage />
+                  </PrivateRoute>
+                } 
               />
               <Route path="*" element={<Navigate to="/" replace />} />
             </Routes>

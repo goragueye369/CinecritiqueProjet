@@ -126,8 +126,9 @@ class CustomTokenObtainPairSerializer(TokenObtainPairSerializer):
         email = attrs.get('email')
         password = attrs.get('password')
         
-        print(f"[DEBUG] Tentative de connexion avec email: {email}")
+        print(f"[DEBUG] Tentative de connexion avec email: '{email}' (type: {type(email)})")
         print(f"[DEBUG] Password fourni: {'oui' if password else 'non'}")
+        print(f"[DEBUG] Email brut reçu: {repr(email)}")
         
         if not email or not password:
             print("[DEBUG] Email ou mot de passe manquant")
