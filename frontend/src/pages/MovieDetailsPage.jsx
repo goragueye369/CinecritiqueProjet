@@ -129,8 +129,8 @@ const MovieDetailsPage = () => {
           onClick={() => navigate('/')}
           style={{
             padding: '10px 20px',
-            backgroundColor: 'var(--accent)',
-            color: '#000',
+            backgroundColor: 'var(--link-color)',
+            color: '#fff',
             border: 'none',
             borderRadius: '4px',
             cursor: 'pointer'

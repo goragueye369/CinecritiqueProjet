@@ -1,7 +1,8 @@
 from rest_framework import generics, permissions, status
 from rest_framework.response import Response
 from rest_framework.decorators import api_view, permission_classes
-from django.db.models import Q, Avg
+from django.db.models import Q, Avg, Count
+from django.db import models
 from .models import Review
 from .serializers import ReviewSerializer, ReviewListSerializer
 
@@ -51,11 +52,28 @@ class ReviewDetailView(generics.RetrieveUpdateDestroyAPIView):
 @permission_classes([permissions.AllowAny])
 def review_stats_view(request):
     """
-    Vue pour obtenir des statistiques sur les critiques
+    Vue pour obtenir des statistiques détaillées sur les critiques
     """
     try:
         total_reviews = Review.objects.count()
         avg_rating = Review.objects.aggregate(avg_rating=Avg('rating'))['avg_rating']
+        
+        # Statistiques par film
+        movie_stats = Review.objects.values('title').annotate(
+            movie_avg_rating=Avg('rating'),
+            movie_review_count=models.Count('id')
+        ).order_by('-movie_avg_rating')
+        
+        # Top films par nombre de critiques
+        top_reviewed = Review.objects.values('title').annotate(
+            review_count=models.Count('id')
+        ).order_by('-review_count')[:5]
+        
+        # Top films par note moyenne
+        top_rated = Review.objects.values('title').annotate(
+            avg_rating=Avg('rating'),
+            review_count=models.Count('id')
+        ).filter(review_count__gte=2).order_by('-avg_rating')[:5]
         
         return Response({
             'total_reviews': total_reviews,
@@ -66,6 +84,11 @@ def review_stats_view(request):
                 '3_stars': Review.objects.filter(rating=3).count(),
                 '2_stars': Review.objects.filter(rating=2).count(),
                 '1_star': Review.objects.filter(rating=1).count(),
+            },
+            'movie_statistics': {
+                'total_movies': movie_stats.count(),
+                'top_reviewed': list(top_reviewed),
+                'top_rated': list(top_rated)
             }
         })
     except Exception as e:

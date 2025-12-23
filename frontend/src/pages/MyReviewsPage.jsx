@@ -126,8 +126,8 @@ const MyReviewsPage = () => {
             top: '50%',
             transform: 'translateY(-50%)',
             padding: '8px 16px',
-            backgroundColor: 'var(--accent)',
-            color: '#000',
+            backgroundColor: 'var(--link-color)',
+            color: '#fff',
             borderRadius: '4px',
             border: 'none',
             cursor: 'pointer',
@@ -199,8 +199,8 @@ const MyReviewsPage = () => {
             onClick={() => navigate('/')}
             style={{
               padding: '12px 30px',
-              backgroundColor: 'var(--accent)',
-              color: '#000',
+              backgroundColor: 'var(--link-color)',
+              color: '#fff',
               borderRadius: '4px',
               fontWeight: '600',
               border: 'none',
@@ -267,8 +267,8 @@ const MyReviewsPage = () => {
                     onClick={() => handleEdit(review.id)}
                     style={{
                       padding: '8px 12px',
-                      backgroundColor: 'var(--accent)',
-                      color: '#000',
+                      backgroundColor: 'var(--link-color)',
+                      color: '#fff',
                       border: 'none',
                       borderRadius: '4px',
                       cursor: 'pointer',

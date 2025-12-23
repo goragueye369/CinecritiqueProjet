@@ -66,8 +66,8 @@ const PublicProfilePage = () => {
           onClick={() => navigate('/discover')}
           style={{
             padding: '0.5rem 1rem',
-            backgroundColor: 'var(--accent)',
-            color: '#000',
+            backgroundColor: 'var(--link-color)',
+            color: '#fff',
             border: 'none',
             borderRadius: '4px',
             cursor: 'pointer'

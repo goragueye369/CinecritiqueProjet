@@ -124,15 +124,15 @@ const LoginPage = () => {
             fontSize: '1rem',
             fontWeight: '600',
             marginBottom: '20px',
-            backgroundColor: 'var(--accent)',
-            color: '#000',
+            backgroundColor: 'var(--link-color)',
+            color: '#fff',
             border: 'none',
             borderRadius: '4px',
             cursor: 'pointer',
             transition: 'background-color 0.2s'
           }}
-          onMouseOver={(e) => !loading && (e.target.style.backgroundColor = 'var(--accent-hover)')}
-          onMouseOut={(e) => !loading && (e.target.style.backgroundColor = 'var(--accent)')}
+          onMouseOver={(e) => !loading && (e.target.style.backgroundColor = 'var(--link-hover)')}
+          onMouseOut={(e) => !loading && (e.target.style.backgroundColor = 'var(--link-color)')}
         >
           {loading ? 'Connexion...' : 'Se connecter'}
         </button>

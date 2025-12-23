@@ -330,8 +330,8 @@ const CreateReviewPage = () => {
                 alignItems: 'center',
                 gap: '0.5rem',
                 padding: '0.75rem 1.5rem',
-                backgroundColor: loading ? '#ccc' : 'var(--accent)',
-                color: loading ? '#666' : '#000',
+                backgroundColor: loading ? '#ccc' : 'var(--link-color)',
+                color: loading ? '#666' : '#fff',
                 border: 'none',
                 borderRadius: '4px',
                 cursor: loading ? 'not-allowed' : 'pointer',
@@ -341,11 +341,11 @@ const CreateReviewPage = () => {
               }}
               onMouseOver={(e) => {
                 if (!loading) {
-                  e.target.style.backgroundColor = '#E6B800';
+                  e.target.style.backgroundColor = 'var(--link-hover)';
                 }
               }}
               onMouseOut={(e) => {
-                e.target.style.backgroundColor = loading ? '#ccc' : 'var(--accent)';
+                e.target.style.backgroundColor = loading ? '#ccc' : 'var(--link-color)';
               }}
             >
               {loading ? (
