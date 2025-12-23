@@ -32,6 +32,11 @@ const HomePage = () => {
   ];
 
   const handleMovieClick = (movie) => {
+    // Rediriger vers la page de détails du film
+    navigate(`/movie/${encodeURIComponent(movie.title)}`);
+  };
+
+  const handleCreateReview = (movie) => {
     // Rediriger vers la page de création de critique avec le film pré-rempli
     navigate(`/create-review?movie=${encodeURIComponent(movie.title)}`);
   };
@@ -234,16 +239,59 @@ const HomePage = () => {
                     </p>
                     
                     <div style={{
-                      backgroundColor: 'var(--accent)',
-                      color: '#000',
-                      padding: '8px 16px',
-                      borderRadius: '4px',
-                      textAlign: 'center',
-                      fontWeight: 'bold',
-                      fontSize: '0.9rem',
-                      transition: 'background-color 0.2s'
+                      display: 'flex',
+                      gap: '10px'
                     }}>
-                      Rédiger une critique
+                      <button
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          handleMovieClick(movie);
+                        }}
+                        style={{
+                          flex: 1,
+                          backgroundColor: 'var(--bg-primary)',
+                          color: 'var(--accent)',
+                          border: '1px solid var(--accent)',
+                          padding: '8px 12px',
+                          borderRadius: '4px',
+                          textAlign: 'center',
+                          fontWeight: 'bold',
+                          fontSize: '0.85rem',
+                          cursor: 'pointer',
+                          transition: 'all 0.2s'
+                        }}
+                        onMouseOver={(e) => {
+                          e.target.style.backgroundColor = 'rgba(245, 197, 24, 0.1)';
+                        }}
+                        onMouseOut={(e) => {
+                          e.target.style.backgroundColor = 'var(--bg-primary)';
+                        }}
+                      >
+                        Voir les critiques
+                      </button>
+                      <button
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          handleCreateReview(movie);
+                        }}
+                        style={{
+                          flex: 1,
+                          backgroundColor: 'var(--accent)',
+                          color: '#000',
+                          border: 'none',
+                          padding: '8px 12px',
+                          borderRadius: '4px',
+                          textAlign: 'center',
+                          fontWeight: 'bold',
+                          fontSize: '0.85rem',
+                          cursor: 'pointer',
+                          transition: 'background-color 0.2s'
+                        }}
+                        onMouseOver={(e) => e.target.style.backgroundColor = 'var(--accent-hover)'}
+                        onMouseOut={(e) => e.target.style.backgroundColor = 'var(--accent)'}
+                      >
+                        Rédiger
+                      </button>
                     </div>
                   </div>
                 </div>
