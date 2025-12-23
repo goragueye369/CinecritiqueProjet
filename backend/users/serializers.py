@@ -76,6 +76,6 @@ class UserListSerializer(serializers.ModelSerializer):
         read_only_fields = fields
     
     def get_reviews_count(self, obj):
-        # Cette méthode comptera le nombre de critiques de l'utilisateur
-        # Une fois que vous aurez le modèle Review implémenté
-        return 0  # À remplacer par obj.reviews.count() plus tard
+        # Compter le nombre de critiques de l'utilisateur
+        from reviews.models import Review
+        return Review.objects.filter(author=obj).count()

@@ -75,6 +75,40 @@ def review_stats_view(request):
         )
 
 @api_view(['GET'])
+@permission_classes([permissions.AllowAny])
+def movie_reviews_view(request, movie_title):
+    """
+    Vue pour récupérer toutes les critiques d'un film spécifique
+    """
+    try:
+        # Normaliser le titre du film pour la recherche insensible à la casse
+        normalized_title = movie_title.strip()
+        reviews = Review.objects.filter(title__iexact=normalized_title).order_by('-created_at')
+        
+        if not reviews.exists():
+            return Response({
+                'message': 'Aucune critique trouvée pour ce film',
+                'reviews': []
+            }, status=status.HTTP_200_OK)
+        
+        serializer = ReviewListSerializer(reviews, many=True)
+        
+        # Calculer les statistiques pour ce film
+        avg_rating = reviews.aggregate(avg_rating=Avg('rating'))['avg_rating']
+        
+        return Response({
+            'movie_title': normalized_title,
+            'total_reviews': reviews.count(),
+            'average_rating': round(avg_rating, 1) if avg_rating else 0,
+            'reviews': serializer.data
+        })
+    except Exception as e:
+        return Response(
+            {'error': 'Erreur lors de la récupération des critiques du film'},
+            status=status.HTTP_500_INTERNAL_SERVER_ERROR
+        )
+
+@api_view(['GET'])
 @permission_classes([permissions.IsAuthenticated])
 def my_reviews_view(request):
     """
