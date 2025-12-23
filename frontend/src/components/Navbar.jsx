@@ -35,7 +35,7 @@ const Navbar = () => {
         margin: '0 auto'
       }}>
         <Link to="/" style={{
-          color: 'var(--accent)',
+          color: 'var(--link-color)',
           textDecoration: 'none',
           fontSize: '1.5rem',
           fontWeight: 'bold'
@@ -53,10 +53,10 @@ const Navbar = () => {
               <Link 
                 to="/discover"
                 style={{
-                  color: 'var(--accent)',
+                  color: 'var(--link-color)',
                   textDecoration: 'none',
                   padding: '0.5rem 1rem',
-                  border: '1px solid var(--accent)',
+                  border: '1px solid var(--link-color)',
                   borderRadius: '4px',
                   transition: 'all 0.2s',
                   display: 'flex',
@@ -64,12 +64,12 @@ const Navbar = () => {
                   gap: '0.5rem'
                 }}
                 onMouseOver={(e) => {
-                  e.target.style.backgroundColor = 'var(--accent)';
-                  e.target.style.color = '#000';
+                  e.target.style.backgroundColor = 'var(--link-color)';
+                  e.target.style.color = '#fff';
                 }}
                 onMouseOut={(e) => {
                   e.target.style.backgroundColor = 'transparent';
-                  e.target.style.color = 'var(--accent)';
+                  e.target.style.color = 'var(--link-color)';
                 }}
               >
                 <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
@@ -80,24 +80,24 @@ const Navbar = () => {
               <Link 
                 to="/profile"
                 style={{
-                  color: 'var(--accent)',
+                  color: 'var(--link-color)',
                   textDecoration: 'none',
                   display: 'flex',
                   alignItems: 'center',
                   gap: '0.5rem',
                   padding: '0.5rem 1rem',
-                  border: '1px solid var(--accent)',
+                  border: '1px solid var(--link-color)',
                   borderRadius: '4px',
                   transition: 'all 0.2s',
-                  backgroundColor: 'rgba(245, 197, 24, 0.1)'
+                  backgroundColor: 'rgba(0, 102, 204, 0.1)'
                 }}
                 onMouseOver={(e) => {
-                  e.target.style.backgroundColor = 'var(--accent)';
-                  e.target.style.color = '#000';
+                  e.target.style.backgroundColor = 'var(--link-color)';
+                  e.target.style.color = '#fff';
                 }}
                 onMouseOut={(e) => {
-                  e.target.style.backgroundColor = 'rgba(245, 197, 24, 0.1)';
-                  e.target.style.color = 'var(--accent)';
+                  e.target.style.backgroundColor = 'rgba(0, 102, 204, 0.1)';
+                  e.target.style.color = 'var(--link-color)';
                 }}
               >
                 <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
@@ -107,12 +107,12 @@ const Navbar = () => {
                 Mon Profil
               </Link>
               <Link 
-                to="/my-reviews"
+                to="/statistics"
                 style={{
-                  color: 'var(--accent)',
+                  color: 'var(--link-color)',
                   textDecoration: 'none',
                   padding: '0.5rem 1rem',
-                  border: '1px solid var(--accent)',
+                  border: '1px solid var(--link-color)',
                   borderRadius: '4px',
                   transition: 'all 0.2s',
                   display: 'flex',
@@ -120,12 +120,39 @@ const Navbar = () => {
                   gap: '0.5rem'
                 }}
                 onMouseOver={(e) => {
-                  e.target.style.backgroundColor = 'var(--accent)';
-                  e.target.style.color = '#000';
+                  e.target.style.backgroundColor = 'var(--link-color)';
+                  e.target.style.color = '#fff';
                 }}
                 onMouseOut={(e) => {
                   e.target.style.backgroundColor = 'transparent';
-                  e.target.style.color = 'var(--accent)';
+                  e.target.style.color = 'var(--link-color)';
+                }}
+              >
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+                  <path d="M19 3H5C3.89 3 3 3.89 3 5V19C3 20.1 3.9 21 5 21H19C20.1 21 21 20.1 21 19V5C21 3.89 20.1 3 19 3ZM9 17H7V10H9V17ZM13 17H11V7H13V17ZM17 17H15V13H17V17Z" fill="currentColor"/>
+                </svg>
+                Statistiques
+              </Link>
+              <Link 
+                to="/my-reviews"
+                style={{
+                  color: 'var(--link-color)',
+                  textDecoration: 'none',
+                  padding: '0.5rem 1rem',
+                  border: '1px solid var(--link-color)',
+                  borderRadius: '4px',
+                  transition: 'all 0.2s',
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '0.5rem'
+                }}
+                onMouseOver={(e) => {
+                  e.target.style.backgroundColor = 'var(--link-color)';
+                  e.target.style.color = '#fff';
+                }}
+                onMouseOut={(e) => {
+                  e.target.style.backgroundColor = 'transparent';
+                  e.target.style.color = 'var(--link-color)';
                 }}
               >
                 <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
@@ -161,20 +188,20 @@ const Navbar = () => {
               <Link 
                 to="/login" 
                 style={{
-                  color: 'var(--accent)',
+                  color: 'var(--link-color)',
                   textDecoration: 'none',
                   padding: '0.5rem 1rem',
-                  border: '1px solid var(--accent)',
+                  border: '1px solid var(--link-color)',
                   borderRadius: '4px',
                   transition: 'all 0.2s'
                 }}
                 onMouseOver={(e) => {
-                  e.target.style.backgroundColor = 'var(--accent)';
-                  e.target.style.color = '#000';
+                  e.target.style.backgroundColor = 'var(--link-color)';
+                  e.target.style.color = '#fff';
                 }}
                 onMouseOut={(e) => {
                   e.target.style.backgroundColor = 'transparent';
-                  e.target.style.color = 'var(--accent)';
+                  e.target.style.color = 'var(--link-color)';
                 }}
               >
                 Connexion
@@ -184,14 +211,14 @@ const Navbar = () => {
                 style={{
                   padding: '0.5rem 1rem',
                   backgroundColor: 'transparent',
-                  color: 'var(--accent)',
-                  border: '1px solid var(--accent)',
+                  color: 'var(--link-color)',
+                  border: '1px solid var(--link-color)',
                   borderRadius: '4px',
                   textDecoration: 'none',
                   transition: 'all 0.2s'
                 }}
                 onMouseOver={(e) => {
-                  e.target.style.backgroundColor = 'rgba(245, 197, 24, 0.1)';
+                  e.target.style.backgroundColor = 'rgba(0, 102, 204, 0.1)';
                 }}
                 onMouseOut={(e) => {
                   e.target.style.backgroundColor = 'transparent';

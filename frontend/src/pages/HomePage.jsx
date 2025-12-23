@@ -276,8 +276,8 @@ const HomePage = () => {
                         }}
                         style={{
                           flex: 1,
-                          backgroundColor: 'var(--accent)',
-                          color: '#000',
+                          backgroundColor: 'var(--link-color)',
+                          color: '#fff',
                           border: 'none',
                           padding: '8px 12px',
                           borderRadius: '4px',
@@ -287,8 +287,8 @@ const HomePage = () => {
                           cursor: 'pointer',
                           transition: 'background-color 0.2s'
                         }}
-                        onMouseOver={(e) => e.target.style.backgroundColor = 'var(--accent-hover)'}
-                        onMouseOut={(e) => e.target.style.backgroundColor = 'var(--accent)'}
+                        onMouseOver={(e) => e.target.style.backgroundColor = 'var(--link-hover)'}
+                        onMouseOut={(e) => e.target.style.backgroundColor = 'var(--link-color)'}
                       >
                         Rédiger
                       </button>
@@ -459,8 +459,8 @@ const HomePage = () => {
                 to="/login" 
                 style={{
                   padding: '12px 30px',
-                  backgroundColor: 'var(--accent)',
-                  color: '#000',
+                  backgroundColor: 'var(--link-color)',
+                  color: '#fff',
                   borderRadius: '4px',
                   fontWeight: '600',
                   textDecoration: 'none',
@@ -468,8 +468,8 @@ const HomePage = () => {
                   transition: 'background-color 0.2s',
                   marginRight: '10px'
                 }}
-                onMouseOver={(e) => e.target.style.backgroundColor = 'var(--accent-hover)'}
-                onMouseOut={(e) => e.target.style.backgroundColor = 'var(--accent)'}
+                onMouseOver={(e) => e.target.style.backgroundColor = 'var(--link-hover)'}
+                onMouseOut={(e) => e.target.style.backgroundColor = 'var(--link-color)'}
               >
                 Connexion
               </Link>
@@ -478,8 +478,8 @@ const HomePage = () => {
                 style={{
                   padding: '12px 30px',
                   backgroundColor: 'transparent',
-                  color: 'var(--accent)',
-                  border: '1px solid var(--accent)',
+                  color: 'var(--link-color)',
+                  border: '1px solid var(--link-color)',
                   borderRadius: '4px',
                   fontWeight: '600',
                   textDecoration: 'none',

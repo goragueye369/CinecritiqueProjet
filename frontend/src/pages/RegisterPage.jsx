@@ -164,8 +164,16 @@ const RegisterPage = () => {
             padding: '12px',
             fontSize: '1rem',
             fontWeight: '600',
-            marginBottom: '20px'
+            marginBottom: '20px',
+            backgroundColor: loading ? '#ccc' : 'var(--link-color)',
+            color: loading ? '#666' : '#fff',
+            border: 'none',
+            borderRadius: '4px',
+            cursor: loading ? 'not-allowed' : 'pointer',
+            transition: 'background-color 0.2s'
           }}
+          onMouseOver={(e) => !loading && (e.target.style.backgroundColor = 'var(--link-hover)')}
+          onMouseOut={(e) => !loading && (e.target.style.backgroundColor = 'var(--link-color)')}
         >
           {loading ? 'Inscription en cours...' : "S'inscrire"}
         </button>

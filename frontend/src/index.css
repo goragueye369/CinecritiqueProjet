@@ -1,10 +1,12 @@
 :root {
-  --bg-primary: #121212;
-  --bg-secondary: #1e1e1e;
+  --bg-primary: #000000;
+  --bg-secondary: #1a1a1a;
   --text-primary: #ffffff;
   --text-secondary: #b3b3b3;
-  --accent: #f5c518; /* Jaune IMDb */
+  --accent: #f5c518; /* Jaune pour les étoiles */
   --accent-hover: #ffdf6c;
+  --link-color: #0066cc; /* Bleu pour les liens */
+  --link-hover: #0052a3;
   --border: #333333;
   --error: #e50914;
 }
@@ -22,13 +24,13 @@ body {
 }
 
 a {
-  color: var(--accent);
+  color: var(--link-color);
   text-decoration: none;
   transition: color 0.2s;
 }
 
 a:hover {
-  color: var(--accent-hover);
+  color: var(--link-hover);
 }
 
 button {

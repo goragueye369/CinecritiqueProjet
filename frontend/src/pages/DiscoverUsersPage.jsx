@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
 import axios from 'axios';
 
@@ -10,6 +10,7 @@ const DiscoverUsersPage = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
   const { user: currentUser, getToken, isAuthenticated } = useAuth();
+  const navigate = useNavigate();
 
   useEffect(() => {
     const fetchUsers = async () => {
@@ -114,14 +115,52 @@ const DiscoverUsersPage = () => {
       margin: '40px auto', 
       padding: '0 20px'
     }}>
-      <h1 style={{ 
-        color: 'var(--accent)',
+      <div style={{
+        display: 'flex',
+        alignItems: 'center',
         marginBottom: '30px',
-        fontSize: '2rem',
-        textAlign: 'center'
+        gap: '20px'
       }}>
-        Découvrez nos membres
-      </h1>
+        <button
+          onClick={() => navigate(-1)}
+          style={{
+            backgroundColor: 'transparent',
+            border: '1px solid var(--link-color)',
+            color: 'var(--link-color)',
+            padding: '10px 15px',
+            borderRadius: '4px',
+            cursor: 'pointer',
+            display: 'flex',
+            alignItems: 'center',
+            gap: '8px',
+            fontSize: '1rem',
+            transition: 'all 0.2s'
+          }}
+          onMouseOver={(e) => {
+            e.target.style.backgroundColor = 'var(--link-color)';
+            e.target.style.color = '#fff';
+          }}
+          onMouseOut={(e) => {
+            e.target.style.backgroundColor = 'transparent';
+            e.target.style.color = 'var(--link-color)';
+          }}
+        >
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+            <path d="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20v-2z"/>
+          </svg>
+          Retour
+        </button>
+        
+        <h1 style={{ 
+          color: 'var(--accent)',
+          margin: 0,
+          fontSize: '2rem',
+          flex: 1,
+          textAlign: 'center'
+        }}>
+          Découvrez nos membres
+        </h1>
+      </div>
       
       <div style={{
         display: 'grid',
