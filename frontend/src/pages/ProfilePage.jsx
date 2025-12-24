@@ -154,13 +154,34 @@ const ProfilePage = () => {
       boxShadow: '0 2px 10px rgba(0, 0, 0, 0.2)'
     }}>
       <div style={{ textAlign: 'right', marginBottom: '1rem' }}>
-        <Link to="/" style={{ 
-          color: 'var(--accent)',
-          textDecoration: 'none',
-          fontWeight: '500'
-        }}>
+        <button
+          onClick={() => navigate('/')}
+          style={{
+            backgroundColor: 'var(--link-color)',
+            color: '#fff',
+            border: 'none',
+            padding: '8px 16px',
+            borderRadius: '4px',
+            cursor: 'pointer',
+            display: 'flex',
+            alignItems: 'center',
+            gap: '8px',
+            fontSize: '0.9rem',
+            fontWeight: '500',
+            transition: 'all 0.2s'
+          }}
+          onMouseOver={(e) => {
+            e.target.style.backgroundColor = 'var(--link-hover)';
+          }}
+          onMouseOut={(e) => {
+            e.target.style.backgroundColor = 'var(--link-color)';
+          }}
+        >
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+            <path d="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20v-2z"/>
+          </svg>
           Retour à l'accueil
-        </Link>
+        </button>
       </div>
 
       <h1 style={{ 
@@ -200,7 +221,7 @@ const ProfilePage = () => {
           position: 'relative'
         }}>
           <img 
-            src={profile.preview ? profile.preview : (profile.avatar ? `http://localhost:8000${profile.avatar}` : 'https://via.placeholder.com/150')} 
+            src={profile.preview || (profile.avatar ? `http://localhost:8000${profile.avatar}` : null)} 
             alt="Profil"
             style={{
               width: '100%',
@@ -312,9 +333,9 @@ const ProfilePage = () => {
               type="submit"
               style={{
                 padding: '0.75rem 1.5rem',
-                backgroundColor: 'var(--accent)',
+                backgroundColor: 'var(--link-color)',
                 border: 'none',
-                color: 'black',
+                color: '#fff',
                 borderRadius: '4px',
                 cursor: 'pointer',
                 fontWeight: 'bold',
@@ -381,9 +402,9 @@ const ProfilePage = () => {
               onClick={() => setIsEditing(true)}
               style={{
                 padding: '0.75rem 1.5rem',
-                backgroundColor: 'var(--accent)',
+                backgroundColor: 'var(--link-color)',
                 border: 'none',
-                color: 'black',
+                color: '#fff',
                 borderRadius: '4px',
                 cursor: 'pointer',
                 fontWeight: 'bold',

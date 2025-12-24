@@ -57,7 +57,7 @@ export const AuthProvider = ({ children }) => {
     
     try {
       const response = await api.post('/login/', {
-        email: credentials.email.trim(),
+        email: credentials.email,
         password: credentials.password
       });
       
