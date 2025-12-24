@@ -38,6 +38,7 @@ CORS_ALLOWED_ORIGINS = [
     "http://127.0.0.1:5174",
     "http://localhost:5175",  # Port actuel
     "http://127.0.0.1:5175",
+    '.onrender.com', 
 ]
 
 CORS_ALLOW_CREDENTIALS = True
@@ -121,7 +122,7 @@ DATABASES = {
         'NAME': 'cinecritique_db',
         'USER': 'cinecritique_db_user',
         'PASSWORD': 'sw3I1kLAyElsk6eXtTEwimpkK0kG0st1',
-        'HOST': 'dpg-d5654vbuibrs739e0gc0-a.oregon-postgres.render.com',
+        'HOST': 'dpg-d5654vbuibrs739e0gc0-a',
         'PORT': '5432',
     }
 } 
