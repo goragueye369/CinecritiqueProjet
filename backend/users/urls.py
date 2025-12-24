@@ -4,13 +4,23 @@ from .views import (
     RegisterView,
     LogoutView,
     UserProfileView,
-    CustomTokenObtainPairView
+    CustomTokenObtainPairView,
+    UserListView,
+    UserDetailView
 )
 
 urlpatterns = [
+    # Authentification
     path('register/', RegisterView.as_view(), name='register'),
     path('login/', CustomTokenObtainPairView.as_view(), name='login'),
-    path('refresh/', TokenRefreshView.as_view(), name='token_refresh'),
     path('logout/', LogoutView.as_view(), name='logout'),
+    
+    # Profil utilisateur
     path('profile/', UserProfileView.as_view(), name='profile'),
+    
+    # Gestion des utilisateurs
+    path('users/', UserListView.as_view(), name='user-list'),
+    path('users/<int:pk>/', UserDetailView.as_view(), name='user-detail'),
+    
+    # Note: L'endpoint /api/token/refresh/ est défini dans config/urls.py
 ]
