@@ -1,8 +1,8 @@
 import { useParams, useNavigate } from 'react-router-dom';
 import { useState, useEffect } from 'react';
-import { FiArrowLeft, FiClock, FiCalendar, FiStar, FiPlay } from 'react-icons/fi';
-
-const IMAGE_BASE_URL = 'https://image.tmdb.org/t/p/w500';
+import { FiArrowLeft, FiClock, FiCalendar, FiStar, FiPlay, FiX } from 'react-icons/fi';
+import { movieService } from '../../services/apiService';
+import { getImageUrl } from '../../services/apiService';
 
 // Fonction pour gérer les erreurs de chargement d'image
 const addDefaultImg = (e) => {
@@ -17,270 +17,333 @@ const MovieDetails = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [cast, setCast] = useState([]);
+  const [trailerUrl, setTrailerUrl] = useState(null);
+  const [showTrailer, setShowTrailer] = useState(false);
+
+  // Fonction pour récupérer la bande-annonce
+  const fetchTrailer = async (movieId) => {
+    try {
+      const videos = await movieService.getMovieVideos(movieId);
+      if (videos && videos.results) {
+        // Trouver la bande-annonce officielle ou la première vidéo disponible
+        const trailer = videos.results.find(
+          video => video.type === 'Trailer' && video.site === 'YouTube'
+        ) || videos.results[0];
+        
+        if (trailer) {
+          return `https://www.youtube.com/embed/${trailer.key}?autoplay=1`;
+        }
+      }
+      return null;
+    } catch (error) {
+      console.error('Erreur lors de la récupération de la bande-annonce:', error);
+      return null;
+    }
+  };
+
+  const handlePlayTrailer = async () => {
+    try {
+      setLoading(true);
+      const url = await fetchTrailer(id);
+      if (url) {
+        setTrailerUrl(url);
+        setShowTrailer(true);
+      } else {
+        // Si aucune bande-annonce n'est disponible, ouvrir une recherche YouTube
+        const searchQuery = encodeURIComponent(`${movie.title} bande annonce officielle`);
+        window.open(`https://www.youtube.com/results?search_query=${searchQuery}`, '_blank');
+      }
+    } catch (error) {
+      console.error('Erreur:', error);
+      setError('Impossible de charger la bande-annonce. Veuillez réessayer plus tard.');
+    } finally {
+      setLoading(false);
+    }
+  };
 
   useEffect(() => {
+    let isMounted = true;
+
     const fetchMovieDetails = async () => {
       try {
         setLoading(true);
+        setError(null);
         
-        // Données de démonstration
-        const demoMovie = {
-          id: id,
-          title: 'Inception',
-          overview: 'Dom Cobb est un voleur expérimenté dans l\'art périlleux de l\'extraction : sa spécialité consiste à s\'approprier les secrets les plus précieux d\'un individu, enfouis au plus profond de son subconscient, pendant qu\'il rêve.',
-          release_date: '2010-07-15',
-          runtime: 148,
-          vote_average: 8.4,
-          poster_path: '/9gk7adHYeDvHkCSEqAvQNLV5Uge.jpg',
-          backdrop_path: '/8riWcADI1kEiGu4Y4Pr6Lxkv710.jpg',
-          genres: [
-            { id: 1, name: 'Science-Fiction' },
-            { id: 2, name: 'Action' },
-            { id: 3, name: 'Thriller' }
-          ]
-        };
+        console.log(`Récupération des détails du film avec l'ID: ${id}`);
+        
+        // Récupérer les détails du film depuis l'API
+        const [movieData, videosData] = await Promise.all([
+          movieService.getMovieDetails(id),
+          movieService.getMovieVideos(id)
+        ]);
+        
+        if (!isMounted) return;
+        
+        if (!movieData) {
+          throw new Error('Film non trouvé');
+        }
 
-        const demoCast = [
-          {
-            id: 1,
-            name: 'Leonardo DiCaprio',
-            character: 'Dom Cobb',
-            profile_path: '/jToSMocaCSPzHC7E4ig5JFiYvGz.jpg',
-            known_for_department: 'Acting'
-          },
-          {
-            id: 2,
-            name: 'Joseph Gordon-Levitt',
-            character: 'Arthur',
-            profile_path: '/3Bq4kwd6GFb4Xz5R4J4R6hFOjLc.jpg',
-            known_for_department: 'Acting'
-          },
-          {
-            id: 3,
-            name: 'Ellen Page',
-            character: 'Ariadne',
-            profile_path: '/vDurbnzZ4vBNDThdN9gHhJqKTFJ.jpg',
-            known_for_department: 'Acting'
-          },
-          {
-            id: 4,
-            name: 'Tom Hardy',
-            character: 'Eames',
-            profile_path: '/sGMA6pA2d604nObJqfaaR0vpbgD.jpg'
-          },
-          {
-            id: 5,
-            name: 'Ken Watanabe',
-            character: 'Saito',
-            profile_path: '/6gZW4U6kNS0XbG6fc3BmGcnwcAw.jpg'
+        console.log('Détails du film récupérés:', movieData);
+        
+        // Mettre à jour l'état avec les données du film
+        setMovie(movieData);
+        
+        // Si les crédits sont déjà inclus dans la réponse (avec append_to_response)
+        if (movieData.credits?.cast) {
+          const topCast = movieData.credits.cast.slice(0, 10).map(actor => ({
+            id: actor.id,
+            name: actor.name,
+            character: actor.character,
+            profile_path: actor.profile_path,
+            known_for_department: actor.known_for_department
+          }));
+          setCast(topCast);
+        } else {
+          // Sinon, faire un appel séparé pour les crédits
+          const creditsData = await movieService.getMovieCredits(id);
+          if (isMounted && creditsData?.cast) {
+            const topCast = creditsData.cast.slice(0, 10).map(actor => ({
+              id: actor.id,
+              name: actor.name,
+              character: actor.character,
+              profile_path: actor.profile_path,
+              known_for_department: actor.known_for_department
+            }));
+            setCast(topCast);
           }
-        ];
-
-        // Essayer d'abord l'API
-        try {
-          const [movieResponse, creditsResponse] = await Promise.all([
-            fetch(`http://localhost:3000/api/movies/${id}`).then(res => {
-              if (!res.ok) throw new Error('API non disponible');
-              return res.json();
-            }),
-            fetch(`http://localhost:3000/api/movies/${id}/credits`).then(res => {
-              if (!res.ok) throw new Error('API non disponible');
-              return res.json();
-            })
-          ]);
-          
-          setMovie(movieResponse);
-          setCast(creditsResponse.cast.slice(0, 10));
-        } catch (apiError) {
-          // Si l'API échoue, utiliser les données de démonstration
-          console.warn('Utilisation des données de démonstration :', apiError.message);
-          setMovie(demoMovie);
-          setCast(demoCast);
         }
       } catch (err) {
-        setError('Impossible de charger les détails du film. ' + err.message);
+        console.error('Erreur lors du chargement des détails du film:', err);
+        if (isMounted) {
+          setError(`Impossible de charger les détails du film. ${err.message}`);
+        }
       } finally {
-        setLoading(false);
+        if (isMounted) {
+          setLoading(false);
+        }
       }
     };
 
-    fetchMovieDetails();
+    if (id) {
+      fetchMovieDetails();
+    } else {
+      setError('Aucun identifiant de film fourni');
+      setLoading(false);
+    }
+
+    return () => {
+      isMounted = false;
+    };
   }, [id]);
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-dark-bg flex items-center justify-center">
-        <div className="animate-spin rounded-full h-16 w-16 border-t-2 border-b-2 border-accent-yellow"></div>
+      <div className="min-h-screen bg-imdb-black flex items-center justify-center">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-16 w-16 border-t-2 border-b-2 border-imdb-yellow mx-auto"></div>
+          <p className="mt-4 text-imdb-text-secondary">Chargement des détails du film...</p>
+        </div>
       </div>
     );
   }
 
   if (error) {
     return (
-      <div className="min-h-screen bg-dark-bg flex items-center justify-center">
-        <div className="text-center">
-          <p className="text-red-500 mb-4">{error}</p>
-          <button 
-            onClick={() => navigate(-1)}
-            className="text-accent-yellow hover:underline"
+      <div className="min-h-screen bg-imdb-black flex items-center justify-center">
+        <div className="text-center p-6 max-w-md mx-auto">
+          <div className="text-4xl mb-4">😕</div>
+          <h2 className="text-2xl font-bold text-imdb-text-primary mb-2">Oups !</h2>
+          <p className="text-imdb-text-secondary mb-6">{error}</p>
+          <button
+            onClick={() => window.location.reload()}
+            className="bg-imdb-yellow hover:bg-yellow-600 text-imdb-black font-bold py-2 px-6 rounded-lg transition-colors"
           >
-            Retour à la page précédente
+            Réessayer
           </button>
         </div>
       </div>
     );
   }
 
-  if (!movie) return null;
-
-  const releaseYear = movie.release_date ? new Date(movie.release_date).getFullYear() : '';
-  const duration = movie.runtime ? `${Math.floor(movie.runtime / 60)}h${movie.runtime % 60}` : '';
-
-  return (
-    <div className="min-h-screen bg-dark-bg text-text-primary">
-      {/* En-tête avec bouton retour */}
-      <header className="bg-dark-surface/80 backdrop-blur-sm fixed w-full z-10">
-        <div className="container mx-auto px-4 py-4">
+  if (!movie) {
+    return (
+      <div className="min-h-screen bg-imdb-black flex items-center justify-center">
+        <div className="text-center">
+          <h2 className="text-2xl font-bold text-imdb-text-primary mb-2">Film non trouvé</h2>
+          <p className="text-imdb-text-secondary">Le film demandé n'existe pas ou a été supprimé.</p>
           <button
-            onClick={() => navigate(-1)}
-            className="flex items-center text-text-secondary hover:text-accent-yellow transition-colors"
+            onClick={() => navigate('/')}
+            className="mt-6 bg-imdb-yellow hover:bg-yellow-600 text-imdb-black font-bold py-2 px-6 rounded-lg transition-colors"
           >
-            <FiArrowLeft className="mr-2" />
-            Retour
+            Retour à l'accueil
           </button>
         </div>
-      </header>
+      </div>
+    );
+  }
 
-      {/* Bannière du film */}
-      <div className="relative pt-16 pb-8 md:pb-16">
-        <div 
-          className="absolute inset-0 bg-cover bg-center opacity-20"
-          style={{
-            backgroundImage: `url(https://image.tmdb.org/t/p/original${movie.backdrop_path})`,
-            backgroundSize: 'cover',
-            backgroundPosition: 'center',
-          }}
-        />
-        <div className="container mx-auto px-4 relative z-10">
-          <div className="flex flex-col md:flex-row gap-8">
+  return (
+    <div className="min-h-screen bg-imdb-black text-imdb-text-primary">
+      {/* En-tête avec image de fond */}
+      <div 
+        className="relative h-96 bg-cover bg-center pt-16"
+        style={{
+          backgroundImage: `linear-gradient(to bottom, rgba(0,0,0,0.7), rgba(0,0,0,0.9)), url(${getImageUrl(movie.backdrop_path || movie.poster_path, 'original')})`,
+          marginTop: '-4rem',
+          paddingTop: '6rem'
+        }}
+      >
+        <div className="absolute inset-0 bg-gradient-to-t from-imdb-black to-transparent"></div>
+        
+        <div className="container mx-auto px-4 relative z-10 h-full flex flex-col">
+          {/* Boutons de navigation */}
+          <div className="absolute top-6 left-4 md:left-8 flex space-x-4 items-center">
+            <button 
+              onClick={() => navigate(-1)}
+              className="group flex items-center justify-center w-10 h-10 rounded-full bg-imdb-yellow/90 hover:bg-imdb-yellow text-imdb-black transition-all duration-200 transform hover:scale-110 shadow-lg"
+              title="Retour"
+            >
+              <FiArrowLeft className="w-5 h-5 transform group-hover:-translate-x-0.5 transition-transform" />
+            </button>
+            <button 
+              onClick={() => navigate('/')}
+              className="flex items-center text-imdb-text-secondary hover:text-imdb-yellow transition-colors bg-imdb-dark-gray/80 hover:bg-imdb-dark-gray px-4 py-2 rounded-full"
+            >
+              Accueil
+            </button>
+          </div>
+          
+          {/* Contenu du film */}
+          <div className="mt-auto mb-12 flex flex-col md:flex-row items-start">
             {/* Affiche du film */}
-            <div className="w-full md:w-1/3 lg:w-1/4 flex-shrink-0">
-              <div className="rounded-lg overflow-hidden shadow-2xl">
-                <img
-                  src={`${IMAGE_BASE_URL}${movie.poster_path}`}
-                  alt={movie.title}
-                  className="movie-poster image-loading"
-                  onError={addDefaultImg}
-                  loading="lazy"
-                />
-              </div>
-              
-              <div className="mt-4 flex justify-center">
-                <button className="flex items-center justify-center bg-accent-yellow text-dark-bg font-bold py-3 px-6 rounded-full hover:bg-yellow-500 transition-colors">
-                  <FiPlay className="mr-2" />
-                  Regarder la bande-annonce
-                </button>
-              </div>
+            <div className="w-48 h-72 md:w-64 md:h-96 rounded-lg overflow-hidden shadow-lg flex-shrink-0 mb-6 md:mb-0 md:mr-8">
+              <img 
+                src={getImageUrl(movie.poster_path, 'w500')} 
+                alt={movie.title} 
+                className="w-full h-full object-cover"
+                onError={addDefaultImg}
+              />
             </div>
-
+            
             {/* Détails du film */}
             <div className="flex-1">
-              <h1 className="text-4xl font-bold mb-2">
-                {movie.title} 
-                {releaseYear && <span className="font-normal text-text-secondary ml-2">({releaseYear})</span>}
-              </h1>
+              <h1 className="text-3xl md:text-4xl font-bold mb-2">{movie.title}</h1>
               
-              <div className="flex flex-wrap items-center gap-4 text-text-secondary mb-6">
-                {movie.release_date && (
-                  <div className="flex items-center">
-                    <FiCalendar className="mr-1" />
-                    {new Date(movie.release_date).toLocaleDateString('fr-FR')}
-                  </div>
+              <div className="flex flex-wrap items-center text-sm text-imdb-text-secondary mb-4">
+                <span className="flex items-center mr-4 mb-2">
+                  <FiCalendar className="mr-1 text-imdb-yellow" />
+                  {new Date(movie.release_date).getFullYear()}
+                </span>
+                {movie.runtime > 0 && (
+                  <span className="flex items-center mr-4 mb-2">
+                    <FiClock className="mr-1 text-imdb-yellow" />
+                    {Math.floor(movie.runtime / 60)}h {movie.runtime % 60}min
+                  </span>
                 )}
-                
-                {duration && (
-                  <div className="flex items-center">
-                    <FiClock className="mr-1" />
-                    {duration}
-                  </div>
-                )}
-                
-                <div className="flex items-center">
-                  <FiStar className="text-accent-yellow mr-1" />
+                <div className="flex items-center bg-imdb-dark-gray/50 px-2 py-1 rounded-full text-xs">
+                  <FiStar className="text-imdb-yellow mr-1" />
                   {movie.vote_average ? movie.vote_average.toFixed(1) : 'N/A'}/10
                 </div>
               </div>
-
-              {/* Genres */}
-              {movie.genres && movie.genres.length > 0 && (
-                <div className="flex flex-wrap gap-2 mb-6">
-                  {movie.genres.map(genre => (
-                    <span 
-                      key={genre.id}
-                      className="bg-dark-surface-light px-3 py-1 rounded-full text-sm"
+              
+              <div className="flex flex-wrap gap-2 mb-4">
+                {movie.genres && movie.genres.map(genre => (
+                  <span key={genre.id} className="px-3 py-1 bg-imdb-dark-gray rounded-full text-sm">
+                    {genre.name}
+                  </span>
+                ))}
+              </div>
+              
+              <h3 className="text-xl font-semibold mb-2 mt-6">Synopsis</h3>
+              <p className="text-imdb-text-secondary mb-6">
+                {movie.overview || 'Aucune description disponible.'}
+              </p>
+              
+              <div className="flex space-x-4">
+                <button 
+                  onClick={handlePlayTrailer}
+                  disabled={loading}
+                  className="bg-imdb-yellow hover:bg-yellow-600 text-imdb-black font-bold py-2 px-6 rounded-full flex items-center transition-colors disabled:opacity-50"
+                >
+                  {loading ? (
+                    <>
+                      <FiPlay className="mr-2 animate-pulse" /> Chargement...
+                    </>
+                  ) : (
+                    <>
+                      <FiPlay className="mr-2" /> Regarder la bande-annonce
+                    </>
+                  )}
+                </button>
+                <button className="bg-imdb-dark-gray hover:bg-imdb-light-gray/20 text-imdb-text-primary font-bold py-2 px-6 rounded-full border border-imdb-light-gray/30 transition-colors">
+                  + Ma liste
+                </button>
+              </div>
+              
+              {/* Modal de la bande-annonce */}
+              {showTrailer && (
+                <div className="fixed inset-0 bg-black bg-opacity-90 z-50 flex items-center justify-center p-4" onClick={() => setShowTrailer(false)}>
+                  <div className="relative w-full max-w-4xl">
+                    <button 
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        setShowTrailer(false);
+                        setTrailerUrl(null);
+                      }}
+                      className="absolute -top-12 right-0 text-white hover:text-imdb-yellow transition-colors"
+                      aria-label="Fermer"
                     >
-                      {genre.name}
-                    </span>
-                  ))}
+                      <FiX size={32} />
+                    </button>
+                    <div className="aspect-w-16 aspect-h-9 w-full">
+                      <iframe
+                        src={trailerUrl}
+                        className="w-full h-[70vh]"
+                        frameBorder="0"
+                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                        allowFullScreen
+                        title="Bande-annonce"
+                      ></iframe>
+                    </div>
+                  </div>
                 </div>
               )}
-
-              {/* Synopsis */}
-              <div className="mb-8">
-                <h2 className="text-xl font-semibold mb-3">Synopsis</h2>
-                <p className="text-text-secondary leading-relaxed">
-                  {movie.overview || 'Aucun synopsis disponible.'}
-                </p>
-              </div>
             </div>
           </div>
         </div>
       </div>
-
-      {/* Casting */}
-      {cast.length > 0 && (
-        <div className="container mx-auto px-4 py-8">
-          <h2 className="text-2xl font-bold mb-6">Casting</h2>
-          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-4">
-            {cast.map(person => (
-              <div key={person.id} className="text-center">
-                <div className="bg-dark-surface-light rounded-lg overflow-hidden mb-2 h-48 flex items-center justify-center">
-                  {person.profile_path ? (
-                    <img
-                      src={`${IMAGE_BASE_URL}${person.profile_path}`}
-                      alt={person.name}
-                      className="h-full w-full object-cover"
-                      onError={(e) => {
-                        e.target.onerror = null;
-                        e.target.src = 'https://via.placeholder.com/200x300?text=Photo+non+disponible';
-                      }}
-                      loading="lazy"
-                    />
-                  ) : (
-                    <div className="w-full h-full bg-dark-surface/50 flex items-center justify-center">
-                      <span className="text-text-secondary">Pas de photo</span>
-                    </div>
-                  )}
+      
+      {/* Distribution des acteurs */}
+      <div className="container mx-auto px-4 py-12">
+        <h2 className="text-2xl font-bold mb-6">Distribution des rôles</h2>
+        
+        {cast.length > 0 ? (
+          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-6">
+            {cast.map(actor => (
+              <div key={actor.id} className="text-center">
+                <div className="w-24 h-24 rounded-full overflow-hidden mx-auto mb-3">
+                  <img 
+                    src={actor.profile_path ? getImageUrl(actor.profile_path, 'w185') : 'https://via.placeholder.com/150?text=No+Image'} 
+                    alt={actor.name}
+                    className="w-full h-full object-cover"
+                    onError={addDefaultImg}
+                  />
                 </div>
-                <div className="p-2">
-                  <h3 className="font-medium text-sm">{person.name}</h3>
-                  <p className="text-xs text-text-secondary">{person.character}</p>
-                  {person.known_for_department && (
-                    <p className="text-xs text-accent-yellow mt-1">{person.known_for_department}</p>
-                  )}
-                </div>
+                <h4 className="font-medium text-sm">{actor.name}</h4>
+                <p className="text-xs text-imdb-text-secondary">{actor.character}</p>
               </div>
             ))}
           </div>
-        </div>
-      )}
-
-      {/* Pied de page */}
-      <footer className="bg-dark-surface border-t border-border-dark py-6 mt-12">
-        <div className="container mx-auto px-4 text-center text-text-secondary text-sm">
-          <p>© {new Date().getFullYear()} CineCritique - Tous droits réservés</p>
-        </div>
-      </footer>
+        ) : (
+          <p className="text-imdb-text-secondary">Aucune information sur la distribution n'est disponible.</p>
+        )}
+      </div>
+      
+      {/* Recommandations de films similaires */}
+      <div className="container mx-auto px-4 py-8 border-t border-imdb-light-gray/10">
+        <h2 className="text-2xl font-bold mb-6">Recommandations</h2>
+        <p className="text-imdb-text-secondary">Les recommandations seront bientôt disponibles.</p>
+      </div>
     </div>
   );
 };

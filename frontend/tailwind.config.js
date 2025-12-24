@@ -8,15 +8,19 @@ export default {
   theme: {
     extend: {
       colors: {
-        // Couleurs principales
-        'dark-bg': '#0a0a0a',
-        'dark-surface': '#141414',
-        'dark-surface-light': '#1f1f1f',
-        'text-primary': '#ffffff',
-        'text-secondary': '#d1d5db',
-        'accent-yellow': '#f5c518',
-        'accent-blue': '#5799ef',
-        'border-dark': '#2d2d2d',
+        // Couleurs inspirées d'IMDb
+        'imdb-black': '#121212',
+        'imdb-dark-gray': '#2c2c2c',
+        'imdb-light-gray': '#757575',
+        'imdb-yellow': '#f5c518',
+        'imdb-blue': '#5799ef',
+        'imdb-white': '#ffffff',
+        'imdb-text-primary': '#ffffff',
+        'imdb-text-secondary': '#d1d5db',
+      },
+      backgroundColor: {
+        primary: 'var(--imdb-black)',
+        secondary: 'var(--imdb-dark-gray)',
       },
       fontFamily: {
         sans: ['Inter', 'sans-serif'],

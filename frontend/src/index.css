@@ -2,46 +2,94 @@
 @tailwind components;
 @tailwind utilities;
 
-/* Styles personnalisés pour les images */
-img {
-  max-width: 100%;
-  height: auto;
-  display: block;
+/* Styles de base */
+body {
+  @apply bg-imdb-black text-imdb-text-primary min-h-screen;
+  font-family: 'Inter', sans-serif;
 }
 
-/* Style pour les images de profil des acteurs */
-.cast-image {
-  width: 100%;
-  height: 240px;
-  object-fit: cover;
-  transition: transform 0.3s ease;
+/* Styles pour les liens */
+a {
+  @apply transition-colors duration-200;
 }
 
-.cast-image:hover {
-  transform: scale(1.05);
+/* Barre de défilement personnalisée */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
 }
 
-/* Style pour l'image d'affiche du film */
-.movie-poster {
-  width: 100%;
-  max-width: 300px;
-  border-radius: 0.5rem;
-  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.5);
+::-webkit-scrollbar-track {
+  @apply bg-imdb-dark-gray;
 }
 
-/* Style pour le fond flou */
-.backdrop-blur {
-  background-size: cover;
-  background-position: center;
-  background-repeat: no-repeat;
+::-webkit-scrollbar-thumb {
+  @apply bg-imdb-light-gray/50 rounded-full hover:bg-imdb-light-gray/70;
+}
+
+/* Styles pour les cartes de film */
+.movie-card {
+  @apply relative overflow-hidden rounded-lg transition-all duration-300 hover:shadow-lg hover:shadow-imdb-yellow/10;
+}
+
+/* Animation de survol des cartes */
+.movie-card img {
+  @apply transition-transform duration-500 group-hover:scale-105;
+}
+
+/* Badge de note */
+.rating-badge {
+  @apply absolute top-2 right-2 bg-imdb-yellow/90 text-imdb-black text-xs font-bold px-2 py-1 rounded-full flex items-center;
+  backdrop-filter: blur(4px);
+}
+
+/* Bouton primaire */
+.btn-primary {
+  @apply bg-imdb-yellow text-imdb-black font-semibold py-2 px-4 rounded hover:bg-imdb-yellow/90 transition-colors;
+}
+
+/* Bouton secondaire */
+.btn-secondary {
+  @apply bg-imdb-dark-gray text-imdb-text-primary font-medium py-2 px-4 rounded border border-imdb-light-gray/30 hover:border-imdb-yellow/50 transition-colors;
 }
 
 /* Animation de chargement */
 @keyframes fadeIn {
-  from { opacity: 0; }
-  to { opacity: 1; }
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
 }
 
-.image-loading {
-  animation: fadeIn 0.5s ease-in;
+.fade-in {
+  animation: fadeIn 0.3s ease-out forwards;
+}
+
+/* Effet de flou pour les images de fond */
+.backdrop-blur {
+  @apply bg-cover bg-center bg-no-repeat relative;
+}
+
+.backdrop-blur::before {
+  content: '';
+  @apply absolute inset-0 bg-imdb-black/80 backdrop-blur-sm;
+  z-index: 0;
+}
+
+/* Styles pour les onglets */
+.tab-active {
+  @apply border-b-2 border-imdb-yellow text-imdb-yellow font-medium;
+}
+
+/* Styles pour les champs de formulaire */
+.input-field {
+  @apply w-full bg-imdb-dark-gray border border-imdb-light-gray/30 rounded px-4 py-2 text-imdb-text-primary focus:outline-none focus:ring-2 focus:ring-imdb-yellow/50 focus:border-transparent;
+}
+
+/* Animation de pulse pour les éléments en chargement */
+.animate-pulse {
+  animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.5; }
 }

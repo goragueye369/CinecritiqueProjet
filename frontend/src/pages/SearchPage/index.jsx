@@ -1,7 +1,8 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { FiSearch } from 'react-icons/fi';
-import { useSearchParams } from 'react-router-dom';
+import { useSearchParams, useNavigate } from 'react-router-dom';
 import MovieCard from '../../components/MovieCard';
+import SearchSuggestions from '../../components/SearchSuggestions';
 import { movieService, getImageUrl } from '../../services/apiService';
 
 const SearchPage = () => {
@@ -9,7 +10,8 @@ const SearchPage = () => {
   const [movies, setMovies] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState(null);
-
+  const searchFormRef = useRef(null);
+  const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const query = searchParams.get('q') || '';
 
@@ -49,9 +51,13 @@ const SearchPage = () => {
   const handleSubmit = (e) => {
     e.preventDefault();
     if (searchTerm.trim()) {
-      // La navigation va déclencher le useEffect qui fera la recherche
-      window.location.href = `/search?q=${encodeURIComponent(searchTerm)}`;
+      navigate(`/search?q=${encodeURIComponent(searchTerm)}`);
     }
+  };
+
+  // Gérer la sélection d'une suggestion
+  const handleSuggestionSelect = (suggestion) => {
+    setSearchTerm('');
   };
 
   return (
@@ -64,32 +70,32 @@ const SearchPage = () => {
           </h1>
           
           {/* Formulaire de recherche */}
-          <form onSubmit={handleSubmit} className="max-w-2xl mx-auto">
-            <div className="relative">
-              <div className="flex w-full">
-                <div className="relative flex-1">
-                  <input
-                    type="text"
-                    value={searchTerm}
-                    onChange={(e) => setSearchTerm(e.target.value)}
-                    onKeyDown={(e) => e.key === 'Enter' && handleSubmit(e)}
-                    placeholder="Rechercher un film..."
-                    className="w-full bg-dark-surface-light border border-r-0 border-border-dark rounded-l-lg py-3 pl-10 pr-4 text-text-primary placeholder-text-secondary focus:outline-none focus:ring-2 focus:ring-accent-yellow focus:border-transparent"
-                  />
-                  <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                    <FiSearch className="text-text-secondary" />
-                  </div>
-                </div>
-                <button
-                  type="submit"
-                  disabled={isLoading || !searchTerm.trim()}
-                  className="bg-accent-yellow text-dark-bg px-6 py-3 rounded-r-lg hover:bg-yellow-500 focus:outline-none focus:ring-2 focus:ring-accent-yellow focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed transition-colors duration-200 font-medium"
-                >
-                  {isLoading ? 'Recherche...' : 'Rechercher'}
-                </button>
-              </div>
+          <div ref={searchFormRef} className="relative max-w-2xl mx-auto mb-8">
+            <form onSubmit={handleSubmit} className="relative">
+              <input
+                type="text"
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                placeholder="Rechercher des films, séries, acteurs..."
+                className="w-full px-4 py-3 pl-12 text-white bg-imdb-light-gray/10 border border-imdb-light-gray/30 rounded-full focus:outline-none focus:ring-2 focus:ring-imdb-yellow/50"
+              />
+              <button
+                type="submit"
+                className="absolute left-4 top-1/2 transform -translate-y-1/2 text-imdb-text-secondary hover:text-imdb-yellow"
+              >
+                <FiSearch size={20} />
+              </button>
+            </form>
+            
+            {/* Suggestions de recherche */}
+            <div className="search-suggestions-container absolute top-full left-0 right-0 mt-1 z-50">
+              <SearchSuggestions 
+                query={searchTerm}
+                onSelect={handleSuggestionSelect}
+                className="w-full"
+              />
             </div>
-          </form>
+          </div>
         </div>
       </header>
 
