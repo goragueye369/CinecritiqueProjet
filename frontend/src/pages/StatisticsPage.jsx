@@ -14,7 +14,7 @@ const StatisticsPage = () => {
     const fetchStats = async () => {
       try {
         setLoading(true);
-        const response = await fetch('http://localhost:8000/api/reviews/stats/');
+        const response = await fetch('https://cinecritiqueprojet.onrender.com/api/reviews/stats/');
         
         if (!response.ok) {
           throw new Error('Erreur lors du chargement des statistiques');

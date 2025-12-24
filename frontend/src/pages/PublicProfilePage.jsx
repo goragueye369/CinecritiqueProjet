@@ -12,7 +12,7 @@ const PublicProfilePage = () => {
   useEffect(() => {
     const fetchUserProfile = async () => {
       try {
-        const response = await fetch(`http://localhost:8000/api/users/${userId}/`);
+        const response = await fetch(`https://cinecritiqueprojet.onrender.com/api/users/${userId}/`);
         
         if (response.ok) {
           const userData = await response.json();

@@ -46,7 +46,7 @@ const CreateReviewPage = () => {
 
     try {
       const token = await getToken();
-      const response = await fetch('http://localhost:8000/api/reviews/', {
+      const response = await fetch('https://cinecritiqueprojet.onrender.com/api/reviews/', {
         method: 'POST',
         headers: {
           'Authorization': `Bearer ${token}`,
