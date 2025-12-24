@@ -122,7 +122,7 @@ DATABASES = {
         'NAME': 'cinecritique_db',
         'USER': 'cinecritique_db_user',
         'PASSWORD': 'sw3I1kLAyElsk6eXtTEwimpkK0kG0st1',
-        'HOST': 'dpg-d5654vbuibrs739e0gc0-a',
+        'HOST': 'dpg-d5654vbuibrs739e0gc0-a.oregon-postgres.render.com',
         'PORT': '5432',
     }
 } 
