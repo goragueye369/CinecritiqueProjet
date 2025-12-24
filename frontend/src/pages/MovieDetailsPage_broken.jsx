@@ -94,7 +94,7 @@ const MovieDetailsPage = () => {
         setMovieData(movieInfo);
 
         // Récupérer les critiques du film depuis l'API
-        const response = await fetch(`http://localhost:8000/api/reviews/movie/${encodeURIComponent(movieTitle)}/`);
+        const response = await fetch(`https://cinecritiqueprojet.onrender.com/api/reviews/movie/${encodeURIComponent(movieTitle)}/`);
         const data = await response.json();
         
         if (response.ok) {
@@ -428,7 +428,7 @@ const MovieDetailsPage = () => {
             )}
           </div>
         </div>
-      )}
+      
 
       {/* Liste des critiques */}
       <div style={{

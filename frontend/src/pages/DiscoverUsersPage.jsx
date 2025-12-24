@@ -3,8 +3,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
 import axios from 'axios';
 
-const API_URL = 'http://localhost:8000/api';
-
+const API_URL = 'https://cinecritiqueprojet.onrender.com/api';
 const DiscoverUsersPage = () => {
   const [users, setUsers] = useState([]);
   const [loading, setLoading] = useState(true);

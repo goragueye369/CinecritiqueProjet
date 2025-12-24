@@ -100,7 +100,7 @@ const ProfilePage = () => {
         formData.append('profile_picture', profile.avatar);
       }
 
-      const response = await fetch('http://localhost:8000/api/profile/', {
+      const response = await fetch('https://cinecritiqueprojet.onrender.com/api/profile/', {
         method: 'PATCH',
         headers: {
           'Authorization': `Bearer ${token}`,
