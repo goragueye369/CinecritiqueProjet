@@ -119,9 +119,9 @@ DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
         'NAME': 'cinecritique_db',
-        'USER': 'postgres',
-        'PASSWORD': 'postgres',
-        'HOST': 'localhost',
+        'USER': 'cinecritique_db_user',
+        'PASSWORD': 'sw3I1kLAyElsk6eXtTEwimpkK0kG0st1',
+        'HOST': 'dpg-d5654vbuibrs739e0gc0-a.oregon-postgres.render.com',
         'PORT': '5432',
     }
 } 
