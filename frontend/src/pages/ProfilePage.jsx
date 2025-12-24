@@ -221,7 +221,7 @@ const ProfilePage = () => {
           position: 'relative'
         }}>
           <img 
-            src={profile.preview ? profile.preview : (profile.avatar ? `http://localhost:8000${profile.avatar}` : 'https://via.placeholder.com/150')} 
+            src={profile.preview || (profile.avatar ? `http://localhost:8000${profile.avatar}` : null)} 
             alt="Profil"
             style={{
               width: '100%',

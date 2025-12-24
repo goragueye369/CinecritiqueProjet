@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { movieService } from '../../services/apiService';
 
-const MovieFilters = ({ onFilterChange, currentFilters }) => {
+const MovieFilters = ({ onFilterChange, currentFilters = {} }) => {
   const [genres, setGenres] = useState([]);
   const [loading, setLoading] = useState(true);
   const [filters, setFilters] = useState({
@@ -49,7 +49,15 @@ const MovieFilters = ({ onFilterChange, currentFilters }) => {
   };
 
   if (loading) {
-    return <div className="text-center py-4">Chargement des filtres...</div>;
+    return (
+      <div style={{
+        textAlign: 'center',
+        padding: '20px',
+        color: 'var(--text-secondary)'
+      }}>
+        Chargement des filtres...
+      </div>
+    );
   }
 
   // Générer les années (des 30 dernières années)
@@ -60,146 +68,323 @@ const MovieFilters = ({ onFilterChange, currentFilters }) => {
   const hasActiveFilters = filters.genre || filters.year || filters.minRating || 
                          filters.sortBy !== 'popularity.desc';
 
+  const selectStyles = {
+    width: '100%',
+    padding: '10px 15px',
+    backgroundColor: 'var(--bg-primary)',
+    border: '2px solid var(--border)',
+    borderRadius: '8px',
+    color: 'var(--text-primary)',
+    fontSize: '14px',
+    outline: 'none',
+    transition: 'all 0.3s ease',
+    cursor: 'pointer',
+    appearance: 'none',
+    backgroundImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3E%3Cpath stroke='%236b7280' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='M6 8l4 4 4-4'/%3E%3C/svg%3E")`,
+    backgroundRepeat: 'no-repeat',
+    backgroundPosition: 'right 10px center',
+    backgroundSize: '16px'
+  };
+
+  const labelStyles = {
+    display: 'block',
+    fontSize: '14px',
+    fontWeight: '600',
+    color: 'var(--text-primary)',
+    marginBottom: '8px'
+  };
+
   return (
-    <div className="bg-dark-surface p-4 rounded-lg shadow-md mb-6">
-      <div className="flex justify-between items-center mb-4">
-        <h3 className="text-lg font-semibold text-text-primary">Filtrer les films</h3>
+    <div style={{
+      backgroundColor: 'var(--bg-tertiary)',
+      padding: '25px',
+      borderRadius: '12px',
+      border: '1px solid var(--border)',
+      boxShadow: '0 2px 8px rgba(0, 0, 0, 0.1)'
+    }}>
+      <div style={{
+        display: 'flex',
+        justifyContent: 'space-between',
+        alignItems: 'center',
+        marginBottom: '20px'
+      }}>
+        <h3 style={{
+          fontSize: '1.1rem',
+          fontWeight: '600',
+          color: 'var(--text-primary)',
+          margin: 0
+        }}>
+          Filtres avancés
+        </h3>
         {hasActiveFilters && (
           <button
             onClick={resetFilters}
-            className="text-xs text-accent-yellow hover:text-yellow-400 font-medium flex items-center"
+            style={{
+              display: 'flex',
+              alignItems: 'center',
+              gap: '6px',
+              padding: '8px 12px',
+              backgroundColor: 'transparent',
+              color: 'var(--accent)',
+              border: '1px solid var(--accent)',
+              borderRadius: '6px',
+              fontSize: '12px',
+              fontWeight: '600',
+              cursor: 'pointer',
+              transition: 'all 0.3s ease'
+            }}
+            onMouseOver={(e) => {
+              e.target.style.backgroundColor = 'var(--accent)';
+              e.target.style.color = '#fff';
+            }}
+            onMouseOut={(e) => {
+              e.target.style.backgroundColor = 'transparent';
+              e.target.style.color = 'var(--accent)';
+            }}
           >
             <svg 
-              xmlns="http://www.w3.org/2000/svg" 
-              className="h-3.5 w-3.5 mr-1" 
-              fill="none" 
+              width="14" 
+              height="14" 
               viewBox="0 0 24 24" 
+              fill="none" 
               stroke="currentColor"
+              strokeWidth="2"
             >
-              <path 
-                strokeLinecap="round" 
-                strokeLinejoin="round" 
-                strokeWidth={2} 
-                d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" 
-              />
+              <path d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
             </svg>
             Réinitialiser
           </button>
         )}
       </div>
       
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+      <div style={{
+        display: 'grid',
+        gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))',
+        gap: '20px'
+      }}>
         {/* Filtre par genre */}
         <div>
-          <label htmlFor="genre" className="block text-sm font-medium text-text-secondary mb-1">
+          <label htmlFor="genre" style={labelStyles}>
             Genre
           </label>
-          <div className="relative">
-            <select
-              id="genre"
-              name="genre"
-              value={filters.genre}
-              onChange={handleChange}
-              className="w-full bg-dark-surface-light border border-border-dark rounded-md py-2 pl-3 pr-8 text-text-primary focus:outline-none focus:ring-2 focus:ring-accent-yellow appearance-none"
-            >
-              <option value="">Tous les genres</option>
-              {genres.map((genre) => (
-                <option key={genre.id} value={genre.id}>
-                  {genre.name}
-                </option>
-              ))}
-            </select>
-            <div className="absolute inset-y-0 right-0 flex items-center pr-2 pointer-events-none">
-              <svg className="h-4 w-4 text-text-secondary" fill="currentColor" viewBox="0 0 20 20">
-                <path fillRule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clipRule="evenodd" />
-              </svg>
-            </div>
-          </div>
+          <select
+            id="genre"
+            name="genre"
+            value={filters.genre}
+            onChange={handleChange}
+            style={selectStyles}
+            onMouseOver={(e) => {
+              e.target.style.borderColor = 'var(--accent)';
+            }}
+            onMouseOut={(e) => {
+              e.target.style.borderColor = 'var(--border)';
+            }}
+            onFocus={(e) => {
+              e.target.style.borderColor = 'var(--accent)';
+              e.target.style.boxShadow = '0 0 0 3px rgba(231, 76, 60, 0.1)';
+            }}
+            onBlur={(e) => {
+              e.target.style.borderColor = 'var(--border)';
+              e.target.style.boxShadow = 'none';
+            }}
+          >
+            <option value="">Tous les genres</option>
+            {genres.map((genre) => (
+              <option key={genre.id} value={genre.id}>
+                {genre.name}
+              </option>
+            ))}
+          </select>
         </div>
 
         {/* Filtre par année */}
         <div>
-          <label htmlFor="year" className="block text-sm font-medium text-text-secondary mb-1">
-            Année
+          <label htmlFor="year" style={labelStyles}>
+            Année de sortie
           </label>
-          <div className="relative">
-            <select
-              id="year"
-              name="year"
-              value={filters.year}
-              onChange={handleChange}
-              className="w-full bg-dark-surface-light border border-border-dark rounded-md py-2 pl-3 pr-8 text-text-primary focus:outline-none focus:ring-2 focus:ring-accent-yellow appearance-none"
-            >
-              <option value="">Toutes les années</option>
-              {years.map((year) => (
-                <option key={year} value={year}>
-                  {year}
-                </option>
-              ))}
-            </select>
-            <div className="absolute inset-y-0 right-0 flex items-center pr-2 pointer-events-none">
-              <svg className="h-4 w-4 text-text-secondary" fill="currentColor" viewBox="0 0 20 20">
-                <path fillRule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clipRule="evenodd" />
-              </svg>
-            </div>
-          </div>
+          <select
+            id="year"
+            name="year"
+            value={filters.year}
+            onChange={handleChange}
+            style={selectStyles}
+            onMouseOver={(e) => {
+              e.target.style.borderColor = 'var(--accent)';
+            }}
+            onMouseOut={(e) => {
+              e.target.style.borderColor = 'var(--border)';
+            }}
+            onFocus={(e) => {
+              e.target.style.borderColor = 'var(--accent)';
+              e.target.style.boxShadow = '0 0 0 3px rgba(231, 76, 60, 0.1)';
+            }}
+            onBlur={(e) => {
+              e.target.style.borderColor = 'var(--border)';
+              e.target.style.boxShadow = 'none';
+            }}
+          >
+            <option value="">Toutes les années</option>
+            {years.map((year) => (
+              <option key={year} value={year}>
+                {year}
+              </option>
+            ))}
+          </select>
         </div>
 
         {/* Filtre par note minimale */}
         <div>
-          <label htmlFor="minRating" className="block text-sm font-medium text-text-secondary mb-1">
+          <label htmlFor="minRating" style={labelStyles}>
             Note minimale
           </label>
-          <div className="relative">
-            <select
-              id="minRating"
-              name="minRating"
-              value={filters.minRating}
-              onChange={handleChange}
-              className="w-full bg-dark-surface-light border border-border-dark rounded-md py-2 pl-3 pr-8 text-text-primary focus:outline-none focus:ring-2 focus:ring-accent-yellow appearance-none"
-            >
-              <option value="">Toutes les notes</option>
-              {[1, 2, 3, 4, 5, 6, 7, 8, 9].map((rating) => (
-                <option key={rating} value={rating}>
-                  {rating}+
-                </option>
-              ))}
-            </select>
-            <div className="absolute inset-y-0 right-0 flex items-center pr-2 pointer-events-none">
-              <svg className="h-4 w-4 text-text-secondary" fill="currentColor" viewBox="0 0 20 20">
-                <path fillRule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clipRule="evenodd" />
-              </svg>
-            </div>
-          </div>
+          <select
+            id="minRating"
+            name="minRating"
+            value={filters.minRating}
+            onChange={handleChange}
+            style={selectStyles}
+            onMouseOver={(e) => {
+              e.target.style.borderColor = 'var(--accent)';
+            }}
+            onMouseOut={(e) => {
+              e.target.style.borderColor = 'var(--border)';
+            }}
+            onFocus={(e) => {
+              e.target.style.borderColor = 'var(--accent)';
+              e.target.style.boxShadow = '0 0 0 3px rgba(231, 76, 60, 0.1)';
+            }}
+            onBlur={(e) => {
+              e.target.style.borderColor = 'var(--border)';
+              e.target.style.boxShadow = 'none';
+            }}
+          >
+            <option value="">Toutes les notes</option>
+            {[1, 2, 3, 4, 5, 6, 7, 8, 9].map((rating) => (
+              <option key={rating} value={rating}>
+                {rating}+ / 10
+              </option>
+            ))}
+          </select>
         </div>
 
         {/* Tri */}
         <div>
-          <label htmlFor="sortBy" className="block text-sm font-medium text-text-secondary mb-1">
+          <label htmlFor="sortBy" style={labelStyles}>
             Trier par
           </label>
-          <div className="relative">
-            <select
-              id="sortBy"
-              name="sortBy"
-              value={filters.sortBy}
-              onChange={handleChange}
-              className="w-full bg-dark-surface-light border border-border-dark rounded-md py-2 pl-3 pr-8 text-text-primary focus:outline-none focus:ring-2 focus:ring-accent-yellow appearance-none"
-            >
-              <option value="popularity.desc">Popularité (décroissant)</option>
-              <option value="popularity.asc">Popularité (croissant)</option>
-              <option value="vote_average.desc">Meilleures notes</option>
-              <option value="primary_release_date.desc">Plus récents</option>
-              <option value="primary_release_date.asc">Plus anciens</option>
-            </select>
-            <div className="absolute inset-y-0 right-0 flex items-center pr-2 pointer-events-none">
-              <svg className="h-4 w-4 text-text-secondary" fill="currentColor" viewBox="0 0 20 20">
-                <path fillRule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clipRule="evenodd" />
-              </svg>
-            </div>
-          </div>
+          <select
+            id="sortBy"
+            name="sortBy"
+            value={filters.sortBy}
+            onChange={handleChange}
+            style={selectStyles}
+            onMouseOver={(e) => {
+              e.target.style.borderColor = 'var(--accent)';
+            }}
+            onMouseOut={(e) => {
+              e.target.style.borderColor = 'var(--border)';
+            }}
+            onFocus={(e) => {
+              e.target.style.borderColor = 'var(--accent)';
+              e.target.style.boxShadow = '0 0 0 3px rgba(231, 76, 60, 0.1)';
+            }}
+            onBlur={(e) => {
+              e.target.style.borderColor = 'var(--border)';
+              e.target.style.boxShadow = 'none';
+            }}
+          >
+            <option value="popularity.desc">Popularité (décroissant)</option>
+            <option value="popularity.asc">Popularité (croissant)</option>
+            <option value="vote_average.desc">Meilleures notes</option>
+            <option value="vote_average.asc">Moins bonnes notes</option>
+            <option value="primary_release_date.desc">Plus récents</option>
+            <option value="primary_release_date.asc">Plus anciens</option>
+            <option value="title.asc">Titre (A-Z)</option>
+            <option value="title.desc">Titre (Z-A)</option>
+          </select>
         </div>
       </div>
+
+      {/* Indicateurs de filtres actifs */}
+      {hasActiveFilters && (
+        <div style={{
+          marginTop: '20px',
+          padding: '15px',
+          backgroundColor: 'var(--bg-secondary)',
+          borderRadius: '8px',
+          border: '1px solid var(--border)'
+        }}>
+          <div style={{
+            fontSize: '13px',
+            color: 'var(--text-secondary)',
+            marginBottom: '10px',
+            fontWeight: '600'
+          }}>
+            Filtres actifs :
+          </div>
+          <div style={{
+            display: 'flex',
+            flexWrap: 'wrap',
+            gap: '8px'
+          }}>
+            {filters.genre && (
+              <span style={{
+                padding: '4px 8px',
+                backgroundColor: 'var(--accent)',
+                color: '#fff',
+                borderRadius: '4px',
+                fontSize: '12px',
+                fontWeight: '500'
+              }}>
+                Genre: {genres.find(g => g.id === parseInt(filters.genre))?.name || filters.genre}
+              </span>
+            )}
+            {filters.year && (
+              <span style={{
+                padding: '4px 8px',
+                backgroundColor: 'var(--accent)',
+                color: '#fff',
+                borderRadius: '4px',
+                fontSize: '12px',
+                fontWeight: '500'
+              }}>
+                Année: {filters.year}
+              </span>
+            )}
+            {filters.minRating && (
+              <span style={{
+                padding: '4px 8px',
+                backgroundColor: 'var(--accent)',
+                color: '#fff',
+                borderRadius: '4px',
+                fontSize: '12px',
+                fontWeight: '500'
+              }}>
+                Note: {filters.minRating}+
+              </span>
+            )}
+            {filters.sortBy !== 'popularity.desc' && (
+              <span style={{
+                padding: '4px 8px',
+                backgroundColor: 'var(--accent)',
+                color: '#fff',
+                borderRadius: '4px',
+                fontSize: '12px',
+                fontWeight: '500'
+              }}>
+                Tri: {
+                  filters.sortBy === 'vote_average.desc' ? 'Meilleures notes' :
+                  filters.sortBy === 'primary_release_date.desc' ? 'Plus récents' :
+                  filters.sortBy === 'primary_release_date.asc' ? 'Plus anciens' :
+                  filters.sortBy === 'title.asc' ? 'Titre A-Z' :
+                  filters.sortBy === 'title.desc' ? 'Titre Z-A' :
+                  filters.sortBy
+                }
+              </span>
+            )}
+          </div>
+        </div>
+      )}
     </div>
   );
 };

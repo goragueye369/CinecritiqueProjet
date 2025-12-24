@@ -164,7 +164,7 @@ const PublicProfilePage = () => {
             flexShrink: 0
           }}>
             <img 
-              src={user.profile_picture ? user.profile_picture : 'https://via.placeholder.com/120'} 
+              src={user.profile_picture || null} 
               alt={`Profil de ${user.username}`}
               style={{
                 width: '100%',

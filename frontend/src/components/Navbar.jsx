@@ -11,7 +11,7 @@ const Navbar = () => {
 
   const handleLogout = () => {
     logout();
-    navigate('/login');
+    navigate('/');
   };
 
   // Ne rien afficher sur les pages d'authentification

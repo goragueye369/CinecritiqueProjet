@@ -29,17 +29,17 @@ const MovieCard = ({ movie, imageUrl }) => {
   };
 
   return (
-    <Link to={`/movie/${movie.id}`} className="group">
+    <Link to={`/movie/${encodeURIComponent(movie.title)}`} className="group">
       <div className="movie-card bg-imdb-dark-gray rounded-lg overflow-hidden shadow-movie-card transition-all duration-300 hover:shadow-lg hover:shadow-imdb-yellow/10">
         {/* Affiche du film */}
         <div className="relative pt-[150%] bg-imdb-black">
           <img 
-            src={imageUrl || 'https://via.placeholder.com/300x450?text=No+Poster'} 
+            src={imageUrl || null} 
             alt={movie.title}
             className="absolute top-0 left-0 w-full h-full object-cover group-hover:opacity-80 transition-opacity duration-300"
             onError={(e) => {
               e.target.onerror = null;
-              e.target.src = 'https://via.placeholder.com/300x450?text=No+Poster';
+              e.target.style.display = 'none'; // Cacher l'image si elle ne se charge pas
             }}
           />
           {/* Badge de note */}

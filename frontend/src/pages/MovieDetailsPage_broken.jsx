@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
-import { Star, Calendar, Clock, User, ArrowLeft, MessageSquare, Play } from 'lucide-react';
+import { Star, Calendar, Clock, User, ArrowLeft, MessageSquare } from 'lucide-react';
 import { movieService, getImageUrl } from '../services/apiService';
 
 const MovieDetailsPage = () => {
@@ -54,21 +54,6 @@ const MovieDetailsPage = () => {
     }
   };
 
-  const renderStars = (rating) => {
-    const stars = [];
-    for (let i = 1; i <= 5; i++) {
-      stars.push(
-        <Star
-          key={i}
-          size={16}
-          fill={i <= rating ? '#F5C518' : 'none'}
-          color={i <= rating ? '#F5C518' : '#ccc'}
-        />
-      );
-    }
-    return stars;
-  };
-
   useEffect(() => {
     const fetchMovieReviews = async () => {
       try {
@@ -88,7 +73,7 @@ const MovieDetailsPage = () => {
             genre: "Non spécifié", // TMDB fournit genres séparément
             duration: "N/A", // TMDB fournit runtime séparément
             description: tmdbMovie.overview || "Aucune description disponible",
-            image: tmdbMovie.poster_path ? getImageUrl(tmdbMovie.poster_path, 'w500') : 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNTAwIiBoZWlnaHQ9Ijc1MCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iNTAwIiBoZWlnaHQ9Ijc1MCIgZmlsbD0iIzJhMmEyYSIvPjx0ZXh0IHg9IjUwJSIgeT0iNTAlIiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBkeT0iLjNlbSIgZmlsbD0iIzk5OTk5OSIgZm9udC1zaXplPSIxOCIgZm9udC1mYW1pbHk9IkFyaWFsIHNhbnMtc2VyaWYiPkltYWdlIG5vbiBkaXNwb25pYmxlPC90ZXh0Pjwvc3ZnPg==',
+            image: tmdbMovie.poster_path ? getImageUrl(tmdbMovie.poster_path, 'w500') : `https://via.placeholder.com/300x450/1a1a1a/ffffff?text=${encodeURIComponent(movieTitle)}`,
             vote_average: tmdbMovie.vote_average,
             release_date: tmdbMovie.release_date
           };
@@ -100,7 +85,7 @@ const MovieDetailsPage = () => {
             genre: "Non spécifié",
             duration: "120 min",
             description: "Film non trouvé dans la base de données TMDB.",
-            image: 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNTAwIiBoZWlnaHQ9Ijc1MCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iNTAwIiBoZWlnaHQ9Ijc1MCIgZmlsbD0iIzJhMmEyYSIvPjx0ZXh0IHg9IjUwJSIgeT0iNTAlIiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBkeT0iLjNlbSIgZmlsbD0iIzk5OTk5OSIgZm9udC1zaXplPSIxOCIgZm9udC1mYW1pbHk9IkFyaWFsIHNhbnMtc2VyaWYiPkltYWdlIG5vbiBkaXNwb25pYmxlPC90ZXh0Pjwvc3ZnPg==',
+            image: `https://via.placeholder.com/300x450/1a1a1a/ffffff?text=${encodeURIComponent(movieTitle)}`,
             vote_average: 0,
             release_date: null
           };
@@ -119,29 +104,48 @@ const MovieDetailsPage = () => {
         }
       } catch (err) {
         console.error('Erreur:', err);
-        setError('Erreur de connexion au service');
+        setError('Erreur de connexion au serveur');
       } finally {
         setLoading(false);
       }
     };
 
-    fetchMovieReviews();
+    if (movieTitle) {
+      fetchMovieReviews();
+    }
   }, [movieTitle]);
+
+  const renderStars = (rating) => {
+    return Array.from({ length: 5 }, (_, index) => (
+      <Star
+        key={index}
+        size={16}
+        fill={index < rating ? '#F5C518' : 'none'}
+        color={index < rating ? '#F5C518' : '#666'}
+        style={{ marginRight: '2px' }}
+      />
+    ));
+  };
+
+  const formatDate = (dateString) => {
+    const date = new Date(dateString);
+    return date.toLocaleDateString('fr-FR', {
+      day: 'numeric',
+      month: 'long',
+      year: 'numeric'
+    });
+  };
 
   if (loading) {
     return (
       <div style={{
         maxWidth: '1200px',
         margin: '0 auto',
-        padding: '0 20px 40px'
+        padding: '40px 20px',
+        textAlign: 'center',
+        color: 'var(--text-secondary)'
       }}>
-        <div style={{
-          textAlign: 'center',
-          padding: '40px',
-          color: 'var(--text-secondary)'
-        }}>
-          <p>Chargement...</p>
-        </div>
+        <p>Chargement des critiques...</p>
       </div>
     );
   }
@@ -151,15 +155,32 @@ const MovieDetailsPage = () => {
       <div style={{
         maxWidth: '1200px',
         margin: '0 auto',
-        padding: '0 20px 40px'
+        padding: '40px 20px',
+        textAlign: 'center'
       }}>
         <div style={{
-          textAlign: 'center',
-          padding: '40px',
-          color: 'var(--error)'
+          backgroundColor: 'rgba(229, 9, 20, 0.1)',
+          color: 'var(--error)',
+          padding: '20px',
+          borderRadius: '8px',
+          border: '1px solid var(--error)',
+          marginBottom: '20px'
         }}>
-          <p>{error}</p>
+          {error}
         </div>
+        <button
+          onClick={() => navigate('/')}
+          style={{
+            padding: '10px 20px',
+            backgroundColor: 'var(--link-color)',
+            color: '#fff',
+            border: 'none',
+            borderRadius: '4px',
+            cursor: 'pointer'
+          }}
+        >
+          Retour à l'accueil
+        </button>
       </div>
     );
   }
@@ -369,6 +390,7 @@ const MovieDetailsPage = () => {
               </div>
             </div>
           )}
+          </div>
 
           {/* Statistiques des critiques */}
           <div style={{
@@ -406,7 +428,7 @@ const MovieDetailsPage = () => {
             )}
           </div>
         </div>
-      </div>
+      )}
 
       {/* Liste des critiques */}
       <div style={{

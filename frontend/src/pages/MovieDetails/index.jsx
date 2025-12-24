@@ -7,7 +7,8 @@ import { getImageUrl } from '../../services/apiService';
 // Fonction pour gérer les erreurs de chargement d'image
 const addDefaultImg = (e) => {
   e.target.onerror = null;
-  e.target.src = 'https://via.placeholder.com/300x450?text=Photo+non+disponible';
+  // Remplacer par un placeholder SVG inline
+  e.target.src = 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMzAwIiBoZWlnaHQ9IjQ1MCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iMzAwIiBoZWlnaHQ9IjQ1MCIgZmlsbD0iIzJhMmEyYSIvPjx0ZXh0IHg9IjUwJSIgeT0iNTAlIiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBkeT0iLjNlbSIgZmlsbD0iIzk5OTk5OSIgZm9udC1zaXplPSIxNCIgZm9udC1mYW1pbHk9IkFyaWFsIHNhbnMtc2VyaWYiPkltYWdlIG5vbiBkaXNwb25pYmxlPC90ZXh0Pjwvc3ZnPg==';
 };
 
 const MovieDetails = () => {
@@ -188,7 +189,9 @@ const MovieDetails = () => {
       <div 
         className="relative h-96 bg-cover bg-center pt-16"
         style={{
-          backgroundImage: `linear-gradient(to bottom, rgba(0,0,0,0.7), rgba(0,0,0,0.9)), url(${getImageUrl(movie.backdrop_path || movie.poster_path, 'original')})`,
+          backgroundImage: movie.backdrop_path || movie.poster_path 
+            ? `linear-gradient(to bottom, rgba(0,0,0,0.7), rgba(0,0,0,0.9)), url(${getImageUrl(movie.backdrop_path || movie.poster_path, 'original')})`
+            : 'linear-gradient(to bottom, rgba(0,0,0,0.8), rgba(0,0,0,0.9))',
           marginTop: '-4rem',
           paddingTop: '6rem'
         }}
@@ -216,13 +219,20 @@ const MovieDetails = () => {
           {/* Contenu du film */}
           <div className="mt-auto mb-12 flex flex-col md:flex-row items-start">
             {/* Affiche du film */}
-            <div className="w-48 h-72 md:w-64 md:h-96 rounded-lg overflow-hidden shadow-lg flex-shrink-0 mb-6 md:mb-0 md:mr-8">
-              <img 
-                src={getImageUrl(movie.poster_path, 'w500')} 
-                alt={movie.title} 
-                className="w-full h-full object-cover"
-                onError={addDefaultImg}
-              />
+            <div className="w-48 h-72 md:w-64 md:h-96 rounded-lg overflow-hidden shadow-lg flex-shrink-0 mb-6 md:mb-0 md:mr-8 bg-imdb-dark-gray flex items-center justify-center">
+              {movie.poster_path ? (
+                <img 
+                  src={getImageUrl(movie.poster_path, 'w500')} 
+                  alt={movie.title} 
+                  className="w-full h-full object-cover"
+                  onError={addDefaultImg}
+                />
+              ) : (
+                <div className="text-center text-imdb-text-secondary">
+                  <FiX className="w-12 h-12 mx-auto mb-2 opacity-50" />
+                  <p className="text-sm">Image non disponible</p>
+                </div>
+              )}
             </div>
             
             {/* Détails du film */}
@@ -321,13 +331,19 @@ const MovieDetails = () => {
           <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-6">
             {cast.map(actor => (
               <div key={actor.id} className="text-center">
-                <div className="w-24 h-24 rounded-full overflow-hidden mx-auto mb-3">
-                  <img 
-                    src={actor.profile_path ? getImageUrl(actor.profile_path, 'w185') : 'https://via.placeholder.com/150?text=No+Image'} 
-                    alt={actor.name}
-                    className="w-full h-full object-cover"
-                    onError={addDefaultImg}
-                  />
+                <div className="w-24 h-24 rounded-full overflow-hidden mx-auto mb-3 bg-imdb-dark-gray flex items-center justify-center">
+                  {actor.profile_path ? (
+                    <img 
+                      src={getImageUrl(actor.profile_path, 'w185')} 
+                      alt={actor.name}
+                      className="w-full h-full object-cover"
+                      onError={addDefaultImg}
+                    />
+                  ) : (
+                    <div className="text-center text-imdb-text-secondary">
+                      <FiX className="w-6 h-6 mx-auto opacity-50" />
+                    </div>
+                  )}
                 </div>
                 <h4 className="font-medium text-sm">{actor.name}</h4>
                 <p className="text-xs text-imdb-text-secondary">{actor.character}</p>

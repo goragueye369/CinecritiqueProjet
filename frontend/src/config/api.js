@@ -2,7 +2,7 @@
 const DEFAULT_CONFIG = {
   VITE_TMDB_API_BASE_URL: 'https://api.themoviedb.org/3',
   VITE_TMDB_IMAGE_BASE_URL: 'https://image.tmdb.org/t/p',
-  VITE_TMDB_API_KEY: '4157f5e2b1f02923676e14d88d1dcbed' // Clé API par défaut
+  VITE_TMDB_API_KEY: 'a293878960c1a25de72bc58b3f8f4160' // Clé API utilisateur
 };
 
 // Récupération des variables d'environnement avec valeurs par défaut

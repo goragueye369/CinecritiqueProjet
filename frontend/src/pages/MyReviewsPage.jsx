@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
 import { API_URL } from '../config/constants';
 import { Star, Film, Calendar, Edit, Trash2, ArrowLeft } from 'lucide-react';
+import { getImageUrl } from '../services/apiService';
 
 const MyReviewsPage = () => {
   const { user, getToken } = useAuth();
@@ -14,9 +15,10 @@ const MyReviewsPage = () => {
   useEffect(() => {
     const fetchReviews = async () => {
       try {
-        const token = await getToken();
-        console.log('Token récupéré:', token ? 'OK' : 'NULL');
+        setLoading(true);
+        setError(null);
         
+        const token = await getToken();
         const response = await fetch(`${API_URL}/reviews/my-reviews/`, {
           headers: {
             'Authorization': `Bearer ${token}`,
@@ -28,7 +30,38 @@ const MyReviewsPage = () => {
 
         if (response.ok) {
           const data = await response.json();
-          setReviews(data);
+          console.log('Structure complète des données critiques:', JSON.stringify(data, null, 2));
+          
+          // Pour chaque critique, récupérer les informations du film depuis TMDB
+          const reviewsWithMovieInfo = await Promise.all(
+            data.map(async (review) => {
+              try {
+                // Rechercher le film par titre dans TMDB
+                const movieResponse = await fetch(
+                  `https://api.themoviedb.org/3/search/movie?api_key=a293878960c1a25de72bc58b3f8f4160&language=fr-FR&query=${encodeURIComponent(review.movie_title || review.title)}&page=1`
+                );
+                
+                if (movieResponse.ok) {
+                  const movieData = await movieResponse.json();
+                  if (movieData.results && movieData.results.length > 0) {
+                    const movie = movieData.results[0];
+                    return {
+                      ...review,
+                      poster_path: movie.poster_path,
+                      movie_info: movie
+                    };
+                  }
+                }
+                return review;
+              } catch (error) {
+                console.error('Erreur lors de la recherche du film:', error);
+                return review;
+              }
+            })
+          );
+          
+          console.log('Critiques avec infos films:', reviewsWithMovieInfo);
+          setReviews(reviewsWithMovieInfo);
         } else {
           console.error('Erreur API:', response.status, response.statusText);
           setError('Erreur lors de la récupération de vos critiques');
@@ -224,91 +257,120 @@ const MyReviewsPage = () => {
                 borderRadius: '12px',
                 padding: '25px',
                 border: '1px solid var(--border)',
-                position: 'relative'
+                position: 'relative',
+                display: 'flex',
+                gap: '25px'
               }}
             >
-              {/* En-tête de la critique */}
+              {/* Image du film */}
               <div style={{
-                display: 'flex',
-                justifyContent: 'space-between',
-                alignItems: 'flex-start',
-                marginBottom: '20px'
+                flexShrink: 0,
+                width: '120px',
+                height: '180px'
               }}>
-                <div style={{ flex: 1 }}>
-                  <h3 style={{
-                    color: 'var(--text-primary)',
-                    fontSize: '1.4rem',
-                    fontWeight: 'bold',
-                    marginBottom: '8px'
-                  }}>
-                    {review.title}
-                  </h3>
-                  <div style={{
-                    display: 'flex',
-                    alignItems: 'center',
-                    gap: '15px',
-                    color: 'var(--text-secondary)',
-                    fontSize: '0.9rem'
-                  }}>
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '5px' }}>
-                      <Calendar size={14} />
-                      {new Date(review.created_at).toLocaleDateString('fr-FR')}
-                    </div>
-                    {renderStars(review.rating)}
-                  </div>
-                </div>
-                
-                {/* Actions */}
-                <div style={{
-                  display: 'flex',
-                  gap: '10px'
-                }}>
-                  <button
-                    onClick={() => handleEdit(review.id)}
-                    style={{
-                      padding: '8px 12px',
-                      backgroundColor: 'var(--link-color)',
-                      color: '#fff',
-                      border: 'none',
-                      borderRadius: '4px',
-                      cursor: 'pointer',
-                      display: 'flex',
-                      alignItems: 'center',
-                      gap: '5px',
-                      fontSize: '0.9rem'
-                    }}
-                  >
-                    <Edit size={14} />
-                    Modifier
-                  </button>
-                  <button
-                    onClick={() => handleDelete(review.id)}
-                    style={{
-                      padding: '8px 12px',
-                      backgroundColor: 'var(--error)',
-                      color: '#fff',
-                      border: 'none',
-                      borderRadius: '4px',
-                      cursor: 'pointer',
-                      display: 'flex',
-                      alignItems: 'center',
-                      gap: '5px',
-                      fontSize: '0.9rem'
-                    }}
-                  >
-                    <Trash2 size={14} />
-                    Supprimer
-                  </button>
-                </div>
+                <img
+                  src={getImageUrl(review.poster_path, 'w300')}
+                  alt={review.title || review.movie_title || 'Film'}
+                  style={{
+                    width: '100%',
+                    height: '100%',
+                    objectFit: 'cover',
+                    borderRadius: '8px',
+                    border: '1px solid var(--border)'
+                  }}
+                  onError={(e) => {
+                    console.error('Erreur image pour critique:', review.title, 'poster_path:', review.poster_path);
+                    e.target.onerror = null;
+                    e.target.src = 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTIwIiBoZWlnaHQ9IjE4MCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iMTIwIiBoZWlnaHQ9IjE4MCIgZmlsbD0iIzJhMmEyYSIvPjx0ZXh0IHg9IjUwJSIgeT0iNTAlIiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBkeT0iLjNlbSIgZmlsbD0iIzk5OTk5OSIgZm9udC1zaXplPSIxMiIgZm9udC1mYW1pbHk9IkFyaWFsIHNhbnMtc2VyaWYiPkltYWdlIG5vbiBkaXNwb25pYmxlPC90ZXh0Pjwvc3ZnPg==';
+                  }}
+                />
               </div>
 
               {/* Contenu de la critique */}
-              <div style={{
-                color: 'var(--text-primary)',
-                lineHeight: '1.6',
-                fontSize: '1rem'
-              }}>
-                {review.content}
+              <div style={{ flex: 1 }}>
+                {/* En-tête de la critique */}
+                <div style={{
+                  display: 'flex',
+                  justifyContent: 'space-between',
+                  alignItems: 'flex-start',
+                  marginBottom: '20px'
+                }}>
+                  <div style={{ flex: 1 }}>
+                    <h3 style={{
+                      color: 'var(--text-primary)',
+                      fontSize: '1.4rem',
+                      fontWeight: 'bold',
+                      marginBottom: '8px'
+                    }}>
+                      {review.title}
+                    </h3>
+                    <div style={{
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: '15px',
+                      color: 'var(--text-secondary)',
+                      fontSize: '0.9rem'
+                    }}>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '5px' }}>
+                        <Calendar size={14} />
+                        {new Date(review.created_at).toLocaleDateString('fr-FR')}
+                      </div>
+                      {renderStars(review.rating)}
+                    </div>
+                  </div>
+                  
+                  {/* Actions */}
+                  <div style={{
+                    display: 'flex',
+                    gap: '10px'
+                  }}>
+                    <button
+                      onClick={() => handleEdit(review.id)}
+                      style={{
+                        padding: '8px 12px',
+                        backgroundColor: 'var(--link-color)',
+                        color: '#fff',
+                        border: 'none',
+                        borderRadius: '4px',
+                        cursor: 'pointer',
+                        display: 'flex',
+                        alignItems: 'center',
+                        gap: '5px',
+                        fontSize: '0.9rem'
+                      }}
+                    >
+                      <Edit size={14} />
+                      Modifier
+                    </button>
+                    <button
+                      onClick={() => handleDelete(review.id)}
+                      style={{
+                        padding: '8px 12px',
+                        backgroundColor: 'var(--error)',
+                        color: '#fff',
+                        border: 'none',
+                        borderRadius: '4px',
+                        cursor: 'pointer',
+                        display: 'flex',
+                        alignItems: 'center',
+                        gap: '5px',
+                        fontSize: '0.9rem'
+                      }}
+                    >
+                      <Trash2 size={14} />
+                      Supprimer
+                    </button>
+                  </div>
+                </div>
+
+                {/* Contenu de la critique */}
+                <div style={{
+                  color: 'var(--text-primary)',
+                  lineHeight: '1.6',
+                  fontSize: '1rem'
+                }}>
+                  {review.content}
+                </div>
               </div>
             </div>
           ))}

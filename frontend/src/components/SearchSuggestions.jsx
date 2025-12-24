@@ -62,7 +62,7 @@ const SearchSuggestions = ({ query, onSelect, className = '' }) => {
           >
             <Link
               to={item.media_type === 'movie' 
-                ? `/movie/${item.id}` 
+                ? `/movie/${encodeURIComponent(item.title)}` 
                 : item.media_type === 'tv' 
                 ? `/tv/${item.id}` 
                 : `/person/${item.id}`

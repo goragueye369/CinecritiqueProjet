@@ -6,7 +6,7 @@ const MovieCard = ({ movie, imageUrl }) => {
   
   return (
     <Link 
-      to={`/movie/${movie.id}`}
+      to={`/movie/${encodeURIComponent(movie.title)}`}
       className="group relative rounded-lg overflow-hidden bg-dark-surface-light hover:shadow-lg transition-all duration-300"
     >
       <div className="aspect-[2/3] bg-dark-surface/50">
@@ -17,7 +17,7 @@ const MovieCard = ({ movie, imageUrl }) => {
           loading="lazy"
           onError={(e) => {
             e.target.onerror = null;
-            e.target.src = 'https://via.placeholder.com/500x750?text=Image+non+disponible';
+            e.target.style.display = 'none'; // Cacher l'image si elle ne se charge pas
           }}
         />
       </div>

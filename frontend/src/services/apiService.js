@@ -90,8 +90,33 @@ const fetchFromApi = async (endpoint, params = '') => {
 };
 
 export const movieService = {
-  getPopularMovies: async (page = 1) => {
-    return fetchFromApi(endpoints.popular, `&page=${page}`);
+  getPopularMovies: async (page = 1, filters = {}) => {
+    let params = `&page=${page}`;
+    
+    console.log('[API] Filtres appliqués:', filters);
+    
+    // Appliquer les filtres avec l'endpoint discover qui supporte tous les paramètres
+    if (filters.genre) {
+      params += `&with_genres=${filters.genre}`;
+      console.log(`[API] Filtre genre appliqué: ${filters.genre}`);
+    }
+    if (filters.year) {
+      // Filtrer par année de sortie exacte
+      params += `&primary_release_year=${filters.year}`;
+      console.log(`[API] Filtre année appliqué: ${filters.year}`);
+    }
+    if (filters.minRating) {
+      params += `&vote_average.gte=${filters.minRating}`;
+      console.log(`[API] Filtre note minimale appliqué: ${filters.minRating}`);
+    }
+    if (filters.sortBy) {
+      params += `&sort_by=${filters.sortBy}`;
+      console.log(`[API] Filtre tri appliqué: ${filters.sortBy}`);
+    }
+    
+    console.log(`[API] Paramètres finaux: ${params}`);
+    // Utiliser discover/movie qui supporte les filtres
+    return fetchFromApi(endpoints.discover, params);
   },
 
   searchMovies: async (query, page = 1) => {
@@ -137,6 +162,6 @@ export const movieService = {
 };
 
 export const getImageUrl = (path, size = 'w500') => {
-  if (!path) return 'https://via.placeholder.com/500x750?text=Image+non+disponible';
+  if (!path) return 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMzAwIiBoZWlnaHQ9IjQ1MCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iMzAwIiBoZWlnaHQ9IjQ1MCIgZmlsbD0iIzJhMmEyYSIvPjx0ZXh0IHg9IjUwJSIgeT0iNTAlIiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBkeT0iLjNlbSIgZmlsbD0iIzk5OTk5OSIgZm9udC1zaXplPSIxNCIgZm9udC1mYW1pbHk9IkFyaWFsIHNhbnMtc2VyaWYiPkltYWdlIG5vbiBkaXNwb25pYmxlPC90ZXh0Pjwvc3ZnPg==';
   return `${API_CONFIG.imageBaseUrl}/${size}${path}`;
 };
