@@ -223,11 +223,11 @@ const ProfilePage = () => {
           position: 'relative'
         }}>
           <img 
-            src={profile.preview || profile.profile_picture || null} 
+            src={profile.preview || profile.profile_picture} 
             alt="Profil"
             onError={(e) => {
               console.log('[DEBUG] Erreur de chargement image:', e.target.src);
-              e.target.src = null;
+              e.target.style.display = 'none';
             }}
             style={{
               width: '100%',
