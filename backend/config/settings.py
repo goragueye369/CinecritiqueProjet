@@ -179,12 +179,12 @@ if not DEBUG:
         # Fallback si dj_database_url n'est pas disponible
         pass
 
-DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'   # ⬅️ IMPORTANT !
+DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'   
 AUTH_USER_MODEL = 'users.CustomUser'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [os.path.join(BASE_DIR, 'frontend', 'dist')],
+        'DIRS': [os.path.join(BASE_DIR, 'templates')],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -194,5 +194,5 @@ TEMPLATES = [
                 'django.contrib.messages.context_processors.messages'
             ]
         }
-    }
+    },
 ] 

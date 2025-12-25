@@ -9,6 +9,9 @@ const MovieDetailsPage = () => {
   const { isAuthenticated, user } = useAuth();
   const navigate = useNavigate();
   
+  // Décoder le titre pour l'affichage
+  const decodedTitle = decodeURIComponent(movieTitle);
+  
   const [movieData, setMovieData] = useState(null);
   const [reviews, setReviews] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -40,7 +43,7 @@ const MovieDetailsPage = () => {
   const handlePlayTrailer = async () => {
     try {
       // Chercher le film par titre pour obtenir l'ID
-      const searchResults = await movieService.searchMovies(movieTitle, 1);
+      const searchResults = await movieService.searchMovies(decodedTitle, 1);
       if (searchResults && searchResults.results && searchResults.results.length > 0) {
         const movieId = searchResults.results[0].id;
         const url = await fetchTrailer(movieId);
@@ -80,7 +83,7 @@ const MovieDetailsPage = () => {
         setLoading(true);
         
         // Rechercher le film via l'API TMDB par titre
-        const searchResults = await movieService.searchMovies(movieTitle, 1);
+        const searchResults = await movieService.searchMovies(decodedTitle, 1);
         let movieInfo = null;
         
         if (searchResults && searchResults.results && searchResults.results.length > 0) {
@@ -100,7 +103,7 @@ const MovieDetailsPage = () => {
         } else {
           // Fallback si aucun film trouvé
           movieInfo = {
-            title: movieTitle,
+            title: decodedTitle,
             year: 2024,
             genre: "Non spécifié",
             duration: "120 min",
@@ -114,7 +117,7 @@ const MovieDetailsPage = () => {
         setMovieData(movieInfo);
 
         // Récupérer les critiques du film depuis l'API
-        const response = await fetch(`https://cinecritiqueprojet.onrender.com/api/reviews/movie/${encodeURIComponent(movieTitle)}/`);
+        const response = await fetch(`https://cinecritiqueprojet.onrender.com/api/reviews/movie/${encodeURIComponent(decodedTitle)}/`);
         const data = await response.json();
         
         if (response.ok) {
@@ -131,7 +134,7 @@ const MovieDetailsPage = () => {
     };
 
     fetchMovieDetails();
-  }, [movieTitle]);
+  }, [decodedTitle]);
 
   if (loading) {
     return (
