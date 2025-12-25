@@ -7,6 +7,7 @@ from django.conf import settings
 from django.conf.urls.static import static
 from django.http import JsonResponse
 from rest_framework_simplejwt.views import TokenRefreshView
+from django.views.generic import TemplateView
 
 # Vue d'accueil personnalisée
 def home_view(request):
@@ -37,8 +38,8 @@ def api_home_view(request):
     })
 
 urlpatterns = [
-    # Page d'accueil de l'API
-    path('', home_view, name='home'),
+    # Page d'accueil frontend (servir le React build)
+    path('', TemplateView.as_view(template_name='index.html'), name='home'),
     
     # Interface d'administration
     path('admin/', admin.site.urls),
@@ -54,5 +55,9 @@ urlpatterns = [
     path('api/token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
 ]
 
-# Servir les fichiers media
-urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+# Servir les fichiers media et static en production
+if not settings.DEBUG:
+    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+    urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
+else:
+    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
