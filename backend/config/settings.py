@@ -167,9 +167,14 @@ if not DEBUG:
     # Pour Render.com, les fichiers media sont servis via l'URL de l'application
     try:
         import dj_database_url
-        DATABASES = {
-            'default': dj_database_url.parse(os.environ.get('DATABASE_URL'))
-        }
+        database_url = os.environ.get('DATABASE_URL')
+        if database_url and database_url.strip():
+            DATABASES = {
+                'default': dj_database_url.parse(database_url)
+            }
+        else:
+            # Utiliser la configuration par défaut si DATABASE_URL est vide
+            pass
     except ImportError:
         # Fallback si dj_database_url n'est pas disponible
         pass
