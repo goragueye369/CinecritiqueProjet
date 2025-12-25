@@ -13,33 +13,46 @@ class RegisterView(generics.CreateAPIView):
     permission_classes = [permissions.AllowAny]
     
     def create(self, request, *args, **kwargs):
-        print(f"[DEBUG] Données d'inscription reçues: {request.data}")
-        serializer = self.get_serializer(data=request.data)
-        print(f"[DEBUG] Serializer valide avant validation: {serializer.is_valid()}")
-        
-        if not serializer.is_valid():
-            print(f"[DEBUG] Erreurs de validation: {serializer.errors}")
-            serializer.is_valid(raise_exception=True)
-        
-        user = serializer.save()
-        print(f"[DEBUG] Utilisateur créé avec ID: {user.id}")
-        print(f"[DEBUG] Email de l'utilisateur: {user.email}")
-        print(f"[DEBUG] Mot de passe défini: {'oui' if user.password else 'non'}")
-        
-        # Generate JWT tokens
-        refresh = RefreshToken.for_user(user)
-        
-        response_data = {
-            'user': UserSerializer(user).data,
-            'tokens': {
-                'refresh': str(refresh),
-                'access': str(refresh.access_token),
-            },
-            'message': 'Inscription réussie !'
-        }
-        
-        print(f"[DEBUG] Réponse d'inscription: {response_data}")
-        return Response(response_data, status=status.HTTP_201_CREATED)
+        try:
+            print(f"[DEBUG] Données d'inscription reçues: {request.data}")
+            print(f"[DEBUG] Content-Type: {request.content_type}")
+            
+            serializer = self.get_serializer(data=request.data)
+            print(f"[DEBUG] Serializer valide avant validation: {serializer.is_valid()}")
+            
+            if not serializer.is_valid():
+                print(f"[DEBUG] Erreurs de validation: {serializer.errors}")
+                return Response({
+                    'error': 'Validation failed',
+                    'details': serializer.errors
+                }, status=status.HTTP_400_BAD_REQUEST)
+            
+            user = serializer.save()
+            print(f"[DEBUG] Utilisateur créé avec ID: {user.id}")
+            print(f"[DEBUG] Email de l'utilisateur: {user.email}")
+            print(f"[DEBUG] Mot de passe défini: {'oui' if user.password else 'non'}")
+            
+            # Generate JWT tokens
+            refresh = RefreshToken.for_user(user)
+            
+            response_data = {
+                'user': UserSerializer(user).data,
+                'tokens': {
+                    'refresh': str(refresh),
+                    'access': str(refresh.access_token),
+                },
+                'message': 'Inscription réussie !'
+            }
+            
+            print(f"[DEBUG] Réponse d'inscription: {response_data}")
+            return Response(response_data, status=status.HTTP_201_CREATED)
+            
+        except Exception as e:
+            print(f"[DEBUG] Exception inattendue dans RegisterView: {str(e)}")
+            return Response({
+                'error': 'Erreur interne du serveur',
+                'detail': str(e)
+            }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 class LogoutView(generics.GenericAPIView):
     permission_classes = [permissions.IsAuthenticated]
