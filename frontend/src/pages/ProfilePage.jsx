@@ -227,7 +227,8 @@ const ProfilePage = () => {
             alt="Profil"
             onError={(e) => {
               console.log('[DEBUG] Erreur de chargement image:', e.target.src);
-              e.target.style.display = 'none';
+              e.target.onerror = null;
+              e.target.src = 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTUwIiBoZWlnaHQ9IjE1MCIgdmlld0JveD0iMCAwIDE1MCAxNTAiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxyZWN0IHdpZHRoPSIxNTAiIGhlaWdodD0iMTUwIiBmaWxsPSIjMzMzIi8+CjxjaXJjbGUgY3g9Ijc1IiBjeT0iNjAiIHI9IjIwIiBmaWxsPSIjOTk5Ii8+CjxwYXRoIGQ9Ik00NSAxMjBDNDUgMTAwIDYwIDg1IDc1IDg1UzEwNSAxMDAgMTA1IDEyMFYxMzBINDVWMTIwWiIgZmlsbD0iIzk5OSIvPgo8L3N2Zz4K';
             }}
             style={{
               width: '100%',
