@@ -1079,8 +1079,15 @@ const MovieCard = ({ movie, onMovieClick, onWatchTrailer, onCreateReview, isAuth
             onClick={(e) => {
               e.stopPropagation();
               if (isAuthenticated) {
-                // Utiliser navigate pour éviter le rechargement complet
-                navigate(`/movie/${encodeURIComponent(movie.title)}#reviews`);
+                // Naviguer vers la page du film
+                navigate(`/movie/${encodeURIComponent(movie.title)}`);
+                // Scroll vers reviews après un délai
+                setTimeout(() => {
+                  const reviewsElement = document.getElementById('reviews');
+                  if (reviewsElement) {
+                    reviewsElement.scrollIntoView({ behavior: 'smooth' });
+                  }
+                }, 500);
               } else {
                 navigate('/login');
               }
