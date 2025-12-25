@@ -5,7 +5,7 @@ import { Star, Calendar, Clock, User, ArrowLeft, MessageSquare, Play } from 'luc
 import { movieService, getImageUrl } from '../services/apiService';
 
 const MovieDetailsPage = () => {
-  const { movieId } = useParams();
+  const { movieTitle } = useParams();
   const { isAuthenticated, user } = useAuth();
   const navigate = useNavigate();
   
@@ -39,13 +39,19 @@ const MovieDetailsPage = () => {
 
   const handlePlayTrailer = async () => {
     try {
-      // Utiliser movieId directement au lieu de movieData.id
-      const url = await fetchTrailer(movieId);
-      if (url) {
-        setTrailerUrl(url);
-        setShowTrailer(true);
+      // Chercher le film par titre pour obtenir l'ID
+      const searchResults = await movieService.searchMovies(movieTitle, 1);
+      if (searchResults && searchResults.results && searchResults.results.length > 0) {
+        const movieId = searchResults.results[0].id;
+        const url = await fetchTrailer(movieId);
+        if (url) {
+          setTrailerUrl(url);
+          setShowTrailer(true);
+        } else {
+          alert('Aucune bande-annonce disponible pour ce film.');
+        }
       } else {
-        alert('Aucune bande-annonce disponible pour ce film.');
+        alert('Film non trouvé.');
       }
     } catch (error) {
       console.error('Erreur lors de la lecture de la bande-annonce:', error);
@@ -73,26 +79,28 @@ const MovieDetailsPage = () => {
       try {
         setLoading(true);
         
-        // Récupérer les détails du film via son ID
-        const movieDetails = await movieService.getMovieDetails(movieId);
+        // Rechercher le film via l'API TMDB par titre
+        const searchResults = await movieService.searchMovies(movieTitle, 1);
         let movieInfo = null;
         
-        if (movieDetails) {
+        if (searchResults && searchResults.results && searchResults.results.length > 0) {
+          // Prendre le premier résultat de recherche
+          const tmdbMovie = searchResults.results[0];
           movieInfo = {
-            id: movieDetails.id,
-            title: movieDetails.title,
-            year: movieDetails.release_date ? movieDetails.release_date.split('-')[0] : 'N/A',
+            id: tmdbMovie.id,
+            title: tmdbMovie.title,
+            year: tmdbMovie.release_date ? tmdbMovie.release_date.split('-')[0] : 'N/A',
             genre: "Non spécifié", // TMDB fournit genres séparément
             duration: "N/A", // TMDB fournit runtime séparément
-            description: movieDetails.overview || "Aucune description disponible",
-            image: movieDetails.poster_path ? getImageUrl(movieDetails.poster_path, 'w500') : 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNTAwIiBoZWlnaHQ9Ijc1MCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iNTAwIiBoZWlnaHQ9Ijc1MCIgZmlsbD0iIzJhMmEyYSIvPjx0ZXh0IHg9IjUwJSIgeT0iNTAlIiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBkeT0iLjNlbSIgZmlsbD0iIzk5OTk5OSIgZm9udC1zaXplPSIxOCIgZm9udC1mYW1pbHk9IkFyaWFsIHNhbnMtc2VyaWYiPkltYWdlIG5vbiBkaXNwb25pYmxlPC90ZXh0Pjwvc3ZnPg==',
-            vote_average: movieDetails.vote_average,
-            release_date: movieDetails.release_date
+            description: tmdbMovie.overview || "Aucune description disponible",
+            image: tmdbMovie.poster_path ? getImageUrl(tmdbMovie.poster_path, 'w500') : 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNTAwIiBoZWlnaHQ9Ijc1MCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iNTAwIiBoZWlnaHQ9Ijc1MCIgZmlsbD0iIzJhMmEyYSIvPjx0ZXh0IHg9IjUwJSIgeT0iNTAlIiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBkeT0iLjNlbSIgZmlsbD0iIzk5OTk5OSIgZm9udC1zaXplPSIxOCIgZm9udC1mYW1pbHk9IkFyaWFsIHNhbnMtc2VyaWYiPkltYWdlIG5vbiBkaXNwb25pYmxlPC90ZXh0Pjwvc3ZnPg==',
+            vote_average: tmdbMovie.vote_average,
+            release_date: tmdbMovie.release_date
           };
         } else {
           // Fallback si aucun film trouvé
           movieInfo = {
-            title: `Film ID: ${movieId}`,
+            title: movieTitle,
             year: 2024,
             genre: "Non spécifié",
             duration: "120 min",
@@ -106,7 +114,7 @@ const MovieDetailsPage = () => {
         setMovieData(movieInfo);
 
         // Récupérer les critiques du film depuis l'API
-        const response = await fetch(`https://cinecritiqueprojet.onrender.com/api/reviews/movie/${movieId}/`);
+        const response = await fetch(`https://cinecritiqueprojet.onrender.com/api/reviews/movie/${encodeURIComponent(movieTitle)}/`);
         const data = await response.json();
         
         if (response.ok) {
@@ -122,7 +130,7 @@ const MovieDetailsPage = () => {
       }
     };
 
-    fetchMovieReviews();
+    fetchMovieDetails();
   }, [movieTitle]);
 
   if (loading) {
