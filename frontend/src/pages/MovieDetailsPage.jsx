@@ -39,7 +39,8 @@ const MovieDetailsPage = () => {
 
   const handlePlayTrailer = async () => {
     try {
-      const url = await fetchTrailer(movieData.id);
+      // Utiliser movieId directement au lieu de movieData.id
+      const url = await fetchTrailer(movieId);
       if (url) {
         setTrailerUrl(url);
         setShowTrailer(true);

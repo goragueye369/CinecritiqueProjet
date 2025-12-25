@@ -46,7 +46,7 @@ urlpatterns = [
     
     # API endpoints
     path('api/', include([
-        path('', api_home_view, name='api_home'),
+        path('home/', api_home_view, name='api_home'),
         path('', include('users.urls')),
         path('reviews/', include('reviews.urls')),
     ])),
