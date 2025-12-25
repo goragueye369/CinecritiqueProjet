@@ -221,7 +221,7 @@ const ProfilePage = () => {
           position: 'relative'
         }}>
           <img 
-            src={profile.preview || (profile.avatar ? `https://cinecritiqueprojet.onrender.com${profile.avatar}` : null)} 
+            src={profile.preview || (profile.profile_picture ? `https://cinecritiqueprojet.onrender.com${profile.profile_picture}` : null)} 
             alt="Profil"
             style={{
               width: '100%',
