@@ -29,7 +29,7 @@ const ProfilePage = () => {
           return;
         }
         
-        const response = await fetch('http://localhost:8000/api/profile/', {
+        const response = await fetch('https://cinecritiqueprojet.onrender.com/api/profile/', {
           headers: {
             'Authorization': `Bearer ${token}`,
             'Content-Type': 'application/json',
@@ -221,7 +221,7 @@ const ProfilePage = () => {
           position: 'relative'
         }}>
           <img 
-            src={profile.preview || (profile.avatar ? `http://localhost:8000${profile.avatar}` : null)} 
+            src={profile.preview || (profile.avatar ? `https://cinecritiqueprojet.onrender.com${profile.avatar}` : null)} 
             alt="Profil"
             style={{
               width: '100%',
