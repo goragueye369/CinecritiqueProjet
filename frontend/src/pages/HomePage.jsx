@@ -69,7 +69,7 @@ const HomePage = () => {
   };
 
   const handleMovieClick = (movie) => {
-    navigate(`/movie/${movie.id}`);
+    navigate(`/movie/${encodeURIComponent(movie.title)}`);
   };
 
   const handleWatchTrailer = async (movie, e) => {
@@ -91,7 +91,7 @@ const HomePage = () => {
   const handleCreateReview = (movie, e) => {
     e.stopPropagation();
     if (isAuthenticated) {
-      navigate(`/create-review?movie=${movie.id}`);
+      navigate(`/create-review?movie=${encodeURIComponent(movie.title)}`);
     } else {
       navigate('/login');
     }
@@ -1074,8 +1074,8 @@ const MovieCard = ({ movie, onMovieClick, onWatchTrailer, onCreateReview, isAuth
             onClick={(e) => {
               e.stopPropagation();
               if (isAuthenticated) {
-                // Utiliser une approche différente pour gérer le hash
-                const url = `/movie/${movie.id}`;
+                // Utiliser le titre du film pour éviter les problèmes d'ID
+                const url = `/movie/${encodeURIComponent(movie.title)}`;
                 window.location.href = url;
                 // Attendre que la page se charge puis scroller vers reviews
                 setTimeout(() => {
