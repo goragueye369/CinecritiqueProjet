@@ -1075,22 +1075,20 @@ const MovieCard = ({ movie, onMovieClick, onWatchTrailer, onCreateReview, isAuth
             Bande-annonce
           </button>
           
+          {isAuthenticated ? (
           <button
             onClick={(e) => {
+              console.log('Bouton Critiques cliqué, isAuthenticated:', isAuthenticated);
               e.stopPropagation();
-              if (isAuthenticated) {
-                // Naviguer vers la page du film
-                navigate(`/movie/${encodeURIComponent(movie.title)}`);
-                // Scroll vers reviews après un délai
-                setTimeout(() => {
-                  const reviewsElement = document.getElementById('reviews');
-                  if (reviewsElement) {
-                    reviewsElement.scrollIntoView({ behavior: 'smooth' });
-                  }
-                }, 500);
-              } else {
-                navigate('/login');
-              }
+              // Naviguer vers la page du film
+              navigate(`/movie/${encodeURIComponent(movie.title)}`);
+              // Scroll vers reviews après un délai
+              setTimeout(() => {
+                const reviewsElement = document.getElementById('reviews');
+                if (reviewsElement) {
+                  reviewsElement.scrollIntoView({ behavior: 'smooth' });
+                }
+              }, 500);
             }}
             style={{
               flex: 1,
@@ -1112,6 +1110,33 @@ const MovieCard = ({ movie, onMovieClick, onWatchTrailer, onCreateReview, isAuth
             <Star size={10} />
             Critiques
           </button>
+        ) : (
+          <button
+            onClick={(e) => {
+              e.stopPropagation();
+              navigate('/login');
+            }}
+            style={{
+              flex: 1,
+              padding: '6px 8px',
+              backgroundColor: 'var(--bg-tertiary)',
+              color: 'var(--text-secondary)',
+              border: '1px solid var(--border)',
+              borderRadius: '6px',
+              cursor: 'pointer',
+              fontSize: '11px',
+              fontWeight: 'bold',
+              transition: 'all 0.3s ease',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              gap: '3px'
+            }}
+          >
+            <Star size={10} />
+            Critiques
+          </button>
+        )}
           
           {isAuthenticated ? (
             <button
