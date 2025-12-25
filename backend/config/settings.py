@@ -30,6 +30,28 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
 
+# Configuration des gestionnaires d'exceptions personnalisés
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+    'formatters': {
+        'verbose': {
+            'format': '{levelname} {asctime} {module} {process:d} {thread:d} {message}',
+            'style': '{',
+        },
+    },
+    'handlers': {
+        'console': {
+            'class': 'logging.StreamHandler',
+            'formatter': 'verbose',
+        },
+    },
+    'root': {
+        'handlers': ['console'],
+        'level': 'INFO',
+    },
+}
+
 # Configuration CORS
 CORS_ALLOWED_ORIGINS = [
     "http://localhost:5173",  # URL du frontend Vite
@@ -67,7 +89,7 @@ CORS_ALLOW_METHODS = [
     'PUT',
 ]
 
-# Configuration DRF
+# Configuration des gestionnaires d'exceptions personnalisés
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': (
         'rest_framework_simplejwt.authentication.JWTAuthentication',
@@ -79,6 +101,7 @@ REST_FRAMEWORK = {
         'rest_framework.renderers.JSONRenderer',
         'rest_framework.renderers.BrowsableAPIRenderer',
     ],
+    'EXCEPTION_HANDLER': 'users.exceptions.custom_exception_handler',
 }
 
 # Configuration JWT
