@@ -2,8 +2,8 @@ from pathlib import Path
 import os
 BASE_DIR = Path(__file__).resolve().parent.parent 
 SECRET_KEY = 'dev-key-change-later' 
-DEBUG = True 
-ALLOWED_HOSTS = ['localhost', '127.0.0.1'] 
+DEBUG = False 
+ALLOWED_HOSTS = ['localhost', '127.0.0.1', 'cinecritiqueprojet.onrender.com', 'cinecritique-projet-nu.vercel.app'] 
 INSTALLED_APPS = [
     'django.contrib.admin',
     'django.contrib.auth',
