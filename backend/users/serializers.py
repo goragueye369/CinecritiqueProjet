@@ -58,7 +58,7 @@ class ProfileUpdateSerializer(serializers.ModelSerializer):
         if User.objects.exclude(id=user.id).filter(username=value).exists():
             raise serializers.ValidationError("Ce pseudo est déjà utilisé.")
         return value
-    
+
     def to_representation(self, instance):
         data = super().to_representation(instance)
         # Convertir l'URL relative en URL complète
@@ -68,6 +68,9 @@ class ProfileUpdateSerializer(serializers.ModelSerializer):
                 if request:
                     # Forcer HTTPS et corriger le protocole
                     data['profile_picture'] = f"https://{request.get_host()}{data['profile_picture']}"
+                else:
+                    # Fallback pour les tests ou requêtes sans contexte
+                    data['profile_picture'] = f"https://cinecritiqueprojet.onrender.com{data['profile_picture']}"
         return data
 
 class UserListSerializer(serializers.ModelSerializer):
