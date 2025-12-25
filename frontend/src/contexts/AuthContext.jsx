@@ -128,9 +128,20 @@ export const AuthProvider = ({ children }) => {
     return token;
   };
 
-  // Si on est en train de charger l'état d'authentification, on ne rend rien
+  // Si on est en train de charger l'état d'authentification, on affiche un écran de chargement
   if (loading) {
-    return <div>Chargement...</div>;
+    return (
+      <div style={{
+        display: 'flex',
+        justifyContent: 'center',
+        alignItems: 'center',
+        height: '100vh',
+        backgroundColor: 'var(--bg-primary)',
+        color: 'var(--text-primary)'
+      }}>
+        <div>Chargement...</div>
+      </div>
+    );
   }
 
   return (

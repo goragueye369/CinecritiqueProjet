@@ -1102,7 +1102,10 @@ const MovieCard = ({ movie, onMovieClick, onWatchTrailer, onCreateReview, isAuth
           
           {isAuthenticated ? (
             <button
-              onClick={(e) => onCreateReview(movie, e)}
+              onClick={(e) => {
+                e.stopPropagation();
+                onCreateReview(movie, e);
+              }}
               style={{
                 flex: 1,
                 padding: '6px 8px',
@@ -1116,13 +1119,13 @@ const MovieCard = ({ movie, onMovieClick, onWatchTrailer, onCreateReview, isAuth
                 transition: 'all 0.3s ease'
               }}
             >
-              S'inscrire
+              Critiquer
             </button>
           ) : (
             <button
               onClick={(e) => {
                 e.stopPropagation();
-                onCreateReview(movie, e);
+                navigate('/register');
               }}
               style={{
                 flex: 1,
