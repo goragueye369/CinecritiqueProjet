@@ -93,8 +93,8 @@ const MovieDetailsPage = () => {
             id: tmdbMovie.id,
             title: tmdbMovie.title,
             year: tmdbMovie.release_date ? tmdbMovie.release_date.split('-')[0] : 'N/A',
-            genre: "Non spécifié", // TMDB fournit genres séparément
-            duration: "N/A", // TMDB fournit runtime séparément
+            genre: "Non spécifié", // Les genres ne sont pas disponibles dans la recherche de base
+            duration: "N/A", // La durée n'est pas disponible dans la recherche de base
             description: tmdbMovie.overview || "Aucune description disponible",
             image: tmdbMovie.poster_path ? getImageUrl(tmdbMovie.poster_path, 'w500') : 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNTAwIiBoZWlnaHQ9Ijc1MCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iNTAwIiBoZWlnaHQ9Ijc1MCIgZmlsbD0iIzJhMmEyYSIvPjx0ZXh0IHg9IjUwJSIgeT0iNTAlIiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBkeT0iLjNlbSIgZmlsbD0iIzk5OTk5OSIgZm9udC1zaXplPSIxOCIgZm9udC1mYW1pbHk9IkFyaWFsIHNhbnMtc2VyaWYiPkltYWdlIG5vbiBkaXNwb25pYmxlPC90ZXh0Pjwvc3ZnPg==',
             vote_average: tmdbMovie.vote_average,
@@ -135,6 +135,18 @@ const MovieDetailsPage = () => {
 
     fetchMovieDetails();
   }, [decodedTitle]);
+
+  // Gérer le scroll vers #reviews
+  useEffect(() => {
+    if (window.location.hash === '#reviews' && !loading) {
+      const reviewsElement = document.getElementById('reviews');
+      if (reviewsElement) {
+        setTimeout(() => {
+          reviewsElement.scrollIntoView({ behavior: 'smooth' });
+        }, 100);
+      }
+    }
+  }, [loading]);
 
   if (loading) {
     return (
