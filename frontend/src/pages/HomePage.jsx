@@ -69,7 +69,7 @@ const HomePage = () => {
   };
 
   const handleMovieClick = (movie) => {
-    navigate(`/movie/${encodeURIComponent(movie.title)}`);
+    navigate(`/movie/${movie.id}`);
   };
 
   const handleWatchTrailer = async (movie, e) => {
@@ -91,7 +91,7 @@ const HomePage = () => {
   const handleCreateReview = (movie, e) => {
     e.stopPropagation();
     if (isAuthenticated) {
-      navigate(`/create-review?movie=${encodeURIComponent(movie.title)}`);
+      navigate(`/create-review?movie=${movie.id}`);
     } else {
       navigate('/login');
     }

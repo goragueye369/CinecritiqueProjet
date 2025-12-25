@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
 import { Star, ArrowLeft, Save, X } from 'lucide-react';
+import { movieService } from '../services/apiService';
 
 const CreateReviewPage = () => {
   const navigate = useNavigate();
@@ -16,11 +17,28 @@ const CreateReviewPage = () => {
   const [error, setError] = useState('');
   const [hoveredStar, setHoveredStar] = useState(0);
 
-  // Pré-remplir le titre du film si passé dans l'URL
+  // Pré-remplir les informations du film si passé dans l'URL
   useEffect(() => {
-    const movieTitle = searchParams.get('movie');
-    if (movieTitle) {
-      setReview(prev => ({ ...prev, title: movieTitle }));
+    const movieId = searchParams.get('movie');
+    if (movieId) {
+      // Si c'est un ID numérique, chercher les détails du film
+      if (!isNaN(movieId)) {
+        // Récupérer les détails du film via le service API
+        movieService.getMovieDetails(movieId)
+          .then(data => {
+            if (data.title) {
+              setReview(prev => ({ 
+                ...prev, 
+                title: data.title,
+                movie_id: movieId
+              }));
+            }
+          })
+          .catch(err => console.error('Erreur:', err));
+      } else {
+        // Si c'est un titre (ancien format)
+        setReview(prev => ({ ...prev, title: movieId }));
+      }
     }
   }, [searchParams]);
 
