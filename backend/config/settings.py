@@ -165,10 +165,14 @@ MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 if not DEBUG:
     # En production, utiliser un service externe pour les fichiers media
     # Pour Render.com, les fichiers media sont servis via l'URL de l'application
-    import dj_database_url
-    DATABASES = {
-        'default': dj_database_url.parse(os.environ.get('DATABASE_URL'))
-    }
+    try:
+        import dj_database_url
+        DATABASES = {
+            'default': dj_database_url.parse(os.environ.get('DATABASE_URL'))
+        }
+    except ImportError:
+        # Fallback si dj_database_url n'est pas disponible
+        pass
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'   # ⬅️ IMPORTANT !
 AUTH_USER_MODEL = 'users.CustomUser'
