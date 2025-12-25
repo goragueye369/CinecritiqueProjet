@@ -64,7 +64,11 @@ class ProfileUpdateSerializer(serializers.ModelSerializer):
         # Convertir l'URL relative en URL complète
         if data.get('profile_picture'):
             if not data['profile_picture'].startswith('http'):
-                data['profile_picture'] = f"http://localhost:8000{data['profile_picture']}"
+                request = self.context.get('request')
+                if request:
+                    # Obtenir l'URL de base du frontend depuis l'en-tête Host
+                    frontend_url = f"{request.scheme}://{request.get_host()}"
+                    data['profile_picture'] = f"{frontend_url}{data['profile_picture']}"
         return data
 
 class UserListSerializer(serializers.ModelSerializer):

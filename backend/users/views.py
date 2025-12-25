@@ -164,6 +164,29 @@ class CustomTokenObtainPairSerializer(TokenObtainPairSerializer):
         print("[DEBUG] Échec de l'authentification")
         raise serializers.ValidationError({"detail": "Identifiants invalides. Veuillez réessayer."})
 
+class CustomTokenObtainPairView(TokenObtainPairView):
+    serializer_class = CustomTokenObtainPairSerializer
+    
+    def post(self, request, *args, **kwargs):
+        try:
+            print(f"[DEBUG] Requête de connexion reçue: {request.data}")
+            serializer = self.get_serializer(data=request.data)
+            print(f"[DEBUG] Serializer valide: {serializer.is_valid()}")
+            
+            if not serializer.is_valid():
+                print(f"[DEBUG] Erreurs de validation: {serializer.errors}")
+                return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+            
+            print(f"[DEBUG] Validation réussie, données: {serializer.validated_data}")
+            return Response(serializer.validated_data, status=status.HTTP_200_OK)
+            
+        except Exception as e:
+            print(f"[DEBUG] Erreur inattendue: {str(e)}")
+            return Response({
+                "error": "Erreur interne du serveur",
+                "detail": str(e)
+            }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
 class UserDetailView(generics.RetrieveAPIView):
     """
     Vue pour récupérer les détails d'un utilisateur spécifique
@@ -174,6 +197,3 @@ class UserDetailView(generics.RetrieveAPIView):
     
     def get_queryset(self):
         return User.objects.all()
-
-class CustomTokenObtainPairView(TokenObtainPairView):
-    serializer_class = CustomTokenObtainPairSerializer
