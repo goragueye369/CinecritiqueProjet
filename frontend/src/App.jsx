@@ -75,7 +75,7 @@ function App() {
                   </PrivateRoute>
                 } 
               />
-              <Route path="/movie/:movieTitle" element={<MovieDetailsPage />} />
+              <Route path="/movie/:movieId" element={<MovieDetailsPage />} />
               <Route path="/statistics" element={<StatisticsPage />} />
               <Route path="*" element={<Navigate to="/" replace />} />
             </Routes>

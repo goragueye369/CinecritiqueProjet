@@ -5,7 +5,7 @@ import { Star, Calendar, Clock, User, ArrowLeft, MessageSquare, Play } from 'luc
 import { movieService, getImageUrl } from '../services/apiService';
 
 const MovieDetailsPage = () => {
-  const { movieTitle } = useParams();
+  const { movieId } = useParams();
   const { isAuthenticated, user } = useAuth();
   const navigate = useNavigate();
   
@@ -68,32 +68,30 @@ const MovieDetailsPage = () => {
   };
 
   useEffect(() => {
-    const fetchMovieReviews = async () => {
+    const fetchMovieDetails = async () => {
       try {
         setLoading(true);
         
-        // Rechercher le film via l'API TMDB
-        const searchResults = await movieService.searchMovies(movieTitle, 1);
+        // Récupérer les détails du film via son ID
+        const movieDetails = await movieService.getMovieDetails(movieId);
         let movieInfo = null;
         
-        if (searchResults && searchResults.results && searchResults.results.length > 0) {
-          // Prendre le premier résultat de recherche
-          const tmdbMovie = searchResults.results[0];
+        if (movieDetails) {
           movieInfo = {
-            id: tmdbMovie.id,
-            title: tmdbMovie.title,
-            year: tmdbMovie.release_date ? tmdbMovie.release_date.split('-')[0] : 'N/A',
+            id: movieDetails.id,
+            title: movieDetails.title,
+            year: movieDetails.release_date ? movieDetails.release_date.split('-')[0] : 'N/A',
             genre: "Non spécifié", // TMDB fournit genres séparément
             duration: "N/A", // TMDB fournit runtime séparément
-            description: tmdbMovie.overview || "Aucune description disponible",
-            image: tmdbMovie.poster_path ? getImageUrl(tmdbMovie.poster_path, 'w500') : 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNTAwIiBoZWlnaHQ9Ijc1MCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iNTAwIiBoZWlnaHQ9Ijc1MCIgZmlsbD0iIzJhMmEyYSIvPjx0ZXh0IHg9IjUwJSIgeT0iNTAlIiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBkeT0iLjNlbSIgZmlsbD0iIzk5OTk5OSIgZm9udC1zaXplPSIxOCIgZm9udC1mYW1pbHk9IkFyaWFsIHNhbnMtc2VyaWYiPkltYWdlIG5vbiBkaXNwb25pYmxlPC90ZXh0Pjwvc3ZnPg==',
-            vote_average: tmdbMovie.vote_average,
-            release_date: tmdbMovie.release_date
+            description: movieDetails.overview || "Aucune description disponible",
+            image: movieDetails.poster_path ? getImageUrl(movieDetails.poster_path, 'w500') : 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNTAwIiBoZWlnaHQ9Ijc1MCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iNTAwIiBoZWlnaHQ9Ijc1MCIgZmlsbD0iIzJhMmEyYSIvPjx0ZXh0IHg9IjUwJSIgeT0iNTAlIiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBkeT0iLjNlbSIgZmlsbD0iIzk5OTk5OSIgZm9udC1zaXplPSIxOCIgZm9udC1mYW1pbHk9IkFyaWFsIHNhbnMtc2VyaWYiPkltYWdlIG5vbiBkaXNwb25pYmxlPC90ZXh0Pjwvc3ZnPg==',
+            vote_average: movieDetails.vote_average,
+            release_date: movieDetails.release_date
           };
         } else {
           // Fallback si aucun film trouvé
           movieInfo = {
-            title: movieTitle,
+            title: `Film ID: ${movieId}`,
             year: 2024,
             genre: "Non spécifié",
             duration: "120 min",
