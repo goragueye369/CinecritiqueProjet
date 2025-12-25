@@ -19,26 +19,31 @@ const CreateReviewPage = () => {
 
   // Pré-remplir les informations du film si passé dans l'URL
   useEffect(() => {
-    const movieId = searchParams.get('movie');
-    if (movieId) {
-      // Si c'est un ID numérique, chercher les détails du film
-      if (!isNaN(movieId)) {
-        // Récupérer les détails du film via le service API
-        movieService.getMovieDetails(movieId)
-          .then(data => {
-            if (data.title) {
-              setReview(prev => ({ 
-                ...prev, 
-                title: data.title,
-                movie_id: movieId
-              }));
-            }
-          })
-          .catch(err => console.error('Erreur:', err));
-      } else {
-        // Si c'est un titre (ancien format)
-        setReview(prev => ({ ...prev, title: movieId }));
-      }
+    const movieTitle = searchParams.get('movie');
+    if (movieTitle) {
+      // Décoder le titre
+      const decodedTitle = decodeURIComponent(movieTitle);
+      
+      // Rechercher le film par titre pour obtenir les détails
+      movieService.searchMovies(decodedTitle, 1)
+        .then(data => {
+          if (data && data.results && data.results.length > 0) {
+            const movie = data.results[0];
+            setReview(prev => ({ 
+              ...prev, 
+              title: movie.title,
+              movie_id: movie.id
+            }));
+          } else {
+            // Si aucun film trouvé, utiliser le titre directement
+            setReview(prev => ({ ...prev, title: decodedTitle }));
+          }
+        })
+        .catch(err => {
+          console.error('Erreur:', err);
+          // En cas d'erreur, utiliser le titre directement
+          setReview(prev => ({ ...prev, title: decodedTitle }));
+        });
     }
   }, [searchParams]);
 
