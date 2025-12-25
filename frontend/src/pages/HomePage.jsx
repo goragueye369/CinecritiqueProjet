@@ -1074,7 +1074,7 @@ const MovieCard = ({ movie, onMovieClick, onWatchTrailer, onCreateReview, isAuth
             onClick={(e) => {
               e.stopPropagation();
               if (isAuthenticated) {
-                window.location.href = `/movie/${encodeURIComponent(movie.title)}#reviews`;
+                navigate(`/movie/${encodeURIComponent(movie.title)}#reviews`);
               } else {
                 navigate('/login');
               }
