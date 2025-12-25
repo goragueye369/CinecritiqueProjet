@@ -66,8 +66,8 @@ class ProfileUpdateSerializer(serializers.ModelSerializer):
             if not data['profile_picture'].startswith('http'):
                 request = self.context.get('request')
                 if request:
-                    # Obtenir l'URL de base du frontend depuis l'en-tête Host
-                    frontend_url = f"{request.scheme}://{request.get_host()}"
+                    # Utiliser HTTPS pour les images en production
+                    frontend_url = f"https://{request.get_host()}"
                     data['profile_picture'] = f"{frontend_url}{data['profile_picture']}"
         return data
 
