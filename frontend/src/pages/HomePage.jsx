@@ -772,6 +772,7 @@ const HomePage = () => {
               onLoadMore={loadMoreMovies}
               hasMore={hasMore}
               loadingMore={loadingMore}
+              navigate={navigate}
             />
           )}
           
@@ -787,6 +788,7 @@ const HomePage = () => {
               onLoadMore={loadMoreMovies}
               hasMore={hasMore}
               loadingMore={loadingMore}
+              navigate={navigate}
             />
           )}
           
@@ -802,6 +804,7 @@ const HomePage = () => {
               onLoadMore={loadMoreMovies}
               hasMore={hasMore}
               loadingMore={loadingMore}
+              navigate={navigate}
             />
           )}
           
@@ -817,6 +820,7 @@ const HomePage = () => {
               onLoadMore={loadMoreMovies}
               hasMore={hasMore}
               loadingMore={loadingMore}
+              navigate={navigate}
             />
           )}
         </div>
@@ -837,7 +841,7 @@ const HomePage = () => {
 };
 
 // Composant MovieSection
-const MovieSection = ({ title, movies, loading, onMovieClick, onWatchTrailer, onCreateReview, isAuthenticated, onLoadMore, hasMore, loadingMore }) => {
+const MovieSection = ({ title, movies, loading, onMovieClick, onWatchTrailer, onCreateReview, isAuthenticated, onLoadMore, hasMore, loadingMore, navigate }) => {
   if (loading) {
     return (
       <div style={{ textAlign: 'center', padding: '40px' }}>
@@ -874,6 +878,7 @@ const MovieSection = ({ title, movies, loading, onMovieClick, onWatchTrailer, on
             onWatchTrailer={onWatchTrailer}
             onCreateReview={onCreateReview}
             isAuthenticated={isAuthenticated}
+            navigate={navigate}
           />
         ))}
       </div>
@@ -944,7 +949,7 @@ const MovieSection = ({ title, movies, loading, onMovieClick, onWatchTrailer, on
 };
 
 // Composant MovieCard
-const MovieCard = ({ movie, onMovieClick, onWatchTrailer, onCreateReview, isAuthenticated }) => {
+const MovieCard = ({ movie, onMovieClick, onWatchTrailer, onCreateReview, isAuthenticated, navigate }) => {
   return (
     <div 
       onClick={() => onMovieClick(movie)}
@@ -1074,8 +1079,15 @@ const MovieCard = ({ movie, onMovieClick, onWatchTrailer, onCreateReview, isAuth
             onClick={(e) => {
               e.stopPropagation();
               if (isAuthenticated) {
-                // Utiliser navigate pour éviter le rechargement complet
-                navigate(`/movie/${encodeURIComponent(movie.title)}#reviews`);
+                // Naviguer vers la page du film
+                navigate(`/movie/${encodeURIComponent(movie.title)}`);
+                // Scroll vers reviews après un délai
+                setTimeout(() => {
+                  const reviewsElement = document.getElementById('reviews');
+                  if (reviewsElement) {
+                    reviewsElement.scrollIntoView({ behavior: 'smooth' });
+                  }
+                }, 500);
               } else {
                 navigate('/login');
               }

@@ -136,18 +136,6 @@ const MovieDetailsPage = () => {
     fetchMovieDetails();
   }, [decodedTitle]);
 
-  // Gérer le scroll vers #reviews
-  useEffect(() => {
-    if (window.location.hash === '#reviews' && !loading) {
-      const reviewsElement = document.getElementById('reviews');
-      if (reviewsElement) {
-        setTimeout(() => {
-          reviewsElement.scrollIntoView({ behavior: 'smooth' });
-        }, 100);
-      }
-    }
-  }, [loading]);
-
   if (loading) {
     return (
       <div style={{
