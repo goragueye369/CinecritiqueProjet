@@ -42,12 +42,14 @@ const ProfilePage = () => {
         if (response.ok) {
           const data = await response.json();
           console.log('[DEBUG] Données profil reçues:', data);
+          console.log('[DEBUG] profile_picture:', data.profile_picture);
+          console.log('[DEBUG] Type de profile_picture:', typeof data.profile_picture);
           setProfile(prev => ({ 
             ...prev, 
             username: data.username || '',
             bio: data.bio || '',
             email: data.email || '',
-            preview: data.profile_picture || null,
+            profile_picture: data.profile_picture || null,
             date_joined: data.date_joined || null
           }));
         } else {
@@ -223,6 +225,10 @@ const ProfilePage = () => {
           <img 
             src={profile.preview || (profile.profile_picture ? `https://cinecritiqueprojet.onrender.com${profile.profile_picture}` : null)} 
             alt="Profil"
+            onError={(e) => {
+              console.log('[DEBUG] Erreur de chargement image:', e.target.src);
+              e.target.src = null;
+            }}
             style={{
               width: '100%',
               height: '100%',
