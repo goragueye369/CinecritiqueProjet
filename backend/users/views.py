@@ -90,9 +90,17 @@ class UserProfileView(generics.RetrieveUpdateAPIView):
         return self.request.user
     
     def retrieve(self, request, *args, **kwargs):
-        instance = self.get_object()
-        serializer = self.get_serializer(instance)
-        return Response(serializer.data)
+        try:
+            instance = self.get_object()
+            serializer = self.get_serializer(instance)
+            print(f"[DEBUG] Profil utilisateur récupéré: {serializer.data}")
+            return Response(serializer.data)
+        except Exception as e:
+            print(f"[DEBUG] Erreur dans retrieve UserProfileView: {str(e)}")
+            return Response({
+                'error': 'Erreur lors de la récupération du profil',
+                'detail': str(e)
+            }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
     
     def update(self, request, *args, **kwargs):
         partial = kwargs.pop('partial', False)
