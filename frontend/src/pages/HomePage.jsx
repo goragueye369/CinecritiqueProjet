@@ -874,7 +874,6 @@ const MovieSection = ({ title, movies, loading, onMovieClick, onWatchTrailer, on
             onWatchTrailer={onWatchTrailer}
             onCreateReview={onCreateReview}
             isAuthenticated={isAuthenticated}
-            navigate={navigate}
           />
         ))}
       </div>
@@ -945,7 +944,7 @@ const MovieSection = ({ title, movies, loading, onMovieClick, onWatchTrailer, on
 };
 
 // Composant MovieCard
-const MovieCard = ({ movie, onMovieClick, onWatchTrailer, onCreateReview, isAuthenticated, navigate }) => {
+const MovieCard = ({ movie, onMovieClick, onWatchTrailer, onCreateReview, isAuthenticated }) => {
   return (
     <div 
       onClick={() => onMovieClick(movie)}
@@ -1117,13 +1116,13 @@ const MovieCard = ({ movie, onMovieClick, onWatchTrailer, onCreateReview, isAuth
                 transition: 'all 0.3s ease'
               }}
             >
-              Critiquer
+              S'inscrire
             </button>
           ) : (
             <button
               onClick={(e) => {
                 e.stopPropagation();
-                navigate('/register');
+                onCreateReview(movie, e);
               }}
               style={{
                 flex: 1,
