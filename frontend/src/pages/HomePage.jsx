@@ -69,7 +69,7 @@ const HomePage = () => {
   };
 
   const handleMovieClick = (movie) => {
-    navigate(`/movie/${encodeURIComponent(movie.title)}`);
+    navigate(`/movie/${movie.id}`);
   };
 
   const handleWatchTrailer = async (movie, e) => {
@@ -91,7 +91,7 @@ const HomePage = () => {
   const handleCreateReview = (movie, e) => {
     e.stopPropagation();
     if (isAuthenticated) {
-      navigate(`/create-review?movie=${encodeURIComponent(movie.title)}`);
+      navigate(`/create-review?movie=${movie.id}`);
     } else {
       navigate('/login');
     }
@@ -1074,7 +1074,16 @@ const MovieCard = ({ movie, onMovieClick, onWatchTrailer, onCreateReview, isAuth
             onClick={(e) => {
               e.stopPropagation();
               if (isAuthenticated) {
-                window.location.href = `/movie/${movie.id}#reviews`;
+                // Utiliser une approche différente pour gérer le hash
+                const url = `/movie/${movie.id}`;
+                window.location.href = url;
+                // Attendre que la page se charge puis scroller vers reviews
+                setTimeout(() => {
+                  const reviewsElement = document.getElementById('reviews');
+                  if (reviewsElement) {
+                    reviewsElement.scrollIntoView({ behavior: 'smooth' });
+                  }
+                }, 1000);
               } else {
                 window.location.href = '/login';
               }
