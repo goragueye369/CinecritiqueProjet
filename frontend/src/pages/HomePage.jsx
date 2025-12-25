@@ -1074,18 +1074,10 @@ const MovieCard = ({ movie, onMovieClick, onWatchTrailer, onCreateReview, isAuth
             onClick={(e) => {
               e.stopPropagation();
               if (isAuthenticated) {
-                // Utiliser le titre du film pour éviter les problèmes d'ID
-                const url = `/movie/${encodeURIComponent(movie.title)}`;
-                window.location.href = url;
-                // Attendre que la page se charge puis scroller vers reviews
-                setTimeout(() => {
-                  const reviewsElement = document.getElementById('reviews');
-                  if (reviewsElement) {
-                    reviewsElement.scrollIntoView({ behavior: 'smooth' });
-                  }
-                }, 1000);
+                // Utiliser navigate pour éviter le rechargement complet
+                navigate(`/movie/${encodeURIComponent(movie.title)}#reviews`);
               } else {
-                window.location.href = '/login';
+                navigate('/login');
               }
             }}
             style={{
@@ -1134,7 +1126,7 @@ const MovieCard = ({ movie, onMovieClick, onWatchTrailer, onCreateReview, isAuth
             <button
               onClick={(e) => {
                 e.stopPropagation();
-                window.location.href = '/register';
+                navigate('/register');
               }}
               style={{
                 flex: 1,
