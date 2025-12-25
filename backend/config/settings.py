@@ -155,10 +155,20 @@ TIME_ZONE = 'Europe/Paris'
 USE_I18N = True 
 USE_TZ = True 
 STATIC_URL = 'static/'
+STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 
 # Media files (uploads)
 MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+
+# Configuration pour la production
+if not DEBUG:
+    # En production, utiliser un service externe pour les fichiers media
+    # Pour Render.com, les fichiers media sont servis via l'URL de l'application
+    import dj_database_url
+    DATABASES = {
+        'default': dj_database_url.parse(os.environ.get('DATABASE_URL'))
+    }
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'   # ⬅️ IMPORTANT !
 AUTH_USER_MODEL = 'users.CustomUser'

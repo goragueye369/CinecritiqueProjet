@@ -44,13 +44,11 @@ const MovieDetailsPage = () => {
         setTrailerUrl(url);
         setShowTrailer(true);
       } else {
-        // Si aucune bande-annonce n'est disponible, ouvrir une recherche YouTube
-        const searchQuery = encodeURIComponent(`${movieData.title} bande annonce officielle`);
-        window.open(`https://www.youtube.com/results?search_query=${searchQuery}`, '_blank');
+        alert('Aucune bande-annonce disponible pour ce film.');
       }
     } catch (error) {
       console.error('Erreur lors de la lecture de la bande-annonce:', error);
-      setError('Impossible de charger la bande-annonce. Veuillez réessayer plus tard.');
+      alert('Impossible de charger la bande-annonce. Veuillez réessayer plus tard.');
     }
   };
 
