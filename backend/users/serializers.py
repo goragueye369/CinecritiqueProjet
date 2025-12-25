@@ -66,8 +66,8 @@ class ProfileUpdateSerializer(serializers.ModelSerializer):
             if not data['profile_picture'].startswith('http'):
                 request = self.context.get('request')
                 if request:
-                    # Utiliser HTTPS pour les images en production
-                    scheme = 'https' if request.is_secure() else 'http'
+                    # Forcer HTTPS pour Render
+                    scheme = 'https'
                     frontend_url = f"{scheme}://{request.get_host()}"
                     data['profile_picture'] = f"{frontend_url}{data['profile_picture']}"
         return data
