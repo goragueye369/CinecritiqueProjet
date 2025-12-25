@@ -223,7 +223,7 @@ const ProfilePage = () => {
           position: 'relative'
         }}>
           <img 
-            src={profile.preview || (profile.profile_picture ? `https://cinecritiqueprojet.onrender.com${profile.profile_picture}` : null)} 
+            src={profile.preview || profile.profile_picture || null} 
             alt="Profil"
             onError={(e) => {
               console.log('[DEBUG] Erreur de chargement image:', e.target.src);
