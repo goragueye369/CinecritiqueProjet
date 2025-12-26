@@ -344,7 +344,7 @@ const HomePage = () => {
                     }}
                   >
                     <User size={20} />
-                    <span>{user?.username || 'Utilisateur'}</span>
+                    <span style={{ color: '#FFD700' }}>{user?.username || 'Utilisateur'}</span>
                     <ChevronRight size={16} />
                   </button>
                   
@@ -465,9 +465,9 @@ const HomePage = () => {
 
       {/* Barre de recherche principale - en haut de la page */}
       <div style={{
-        marginBottom: '30px',
+        marginBottom: '15px',
         backgroundColor: 'var(--bg-secondary)',
-        padding: '25px',
+        padding: '20px',
         borderRadius: '12px',
         border: '1px solid var(--border)',
         boxShadow: '0 4px 12px rgba(0, 0, 0, 0.1)'
