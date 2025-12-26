@@ -1075,12 +1075,11 @@ const MovieCard = ({ movie, onMovieClick, onWatchTrailer, onCreateReview, isAuth
             Bande-annonce
           </button>
           
-          {isAuthenticated ? (
           <button
             onClick={(e) => {
               console.log('Bouton Critiques cliqué, isAuthenticated:', isAuthenticated);
               e.stopPropagation();
-              // Naviguer vers la page du film
+              // Toujours permettre la navigation vers les critiques
               navigate(`/movie/${encodeURIComponent(movie.title)}`);
               // Scroll vers reviews après un délai
               setTimeout(() => {
@@ -1093,8 +1092,8 @@ const MovieCard = ({ movie, onMovieClick, onWatchTrailer, onCreateReview, isAuth
             style={{
               flex: 1,
               padding: '6px 8px',
-              backgroundColor: 'var(--bg-tertiary)',
-              color: 'var(--text-primary)',
+              backgroundColor: isAuthenticated ? 'var(--bg-tertiary)' : 'var(--accent)',
+              color: isAuthenticated ? 'var(--text-primary)' : '#fff',
               border: '1px solid var(--border)',
               borderRadius: '6px',
               cursor: 'pointer',
@@ -1110,33 +1109,6 @@ const MovieCard = ({ movie, onMovieClick, onWatchTrailer, onCreateReview, isAuth
             <Star size={10} />
             Critiques
           </button>
-        ) : (
-          <button
-            onClick={(e) => {
-              e.stopPropagation();
-              navigate('/login');
-            }}
-            style={{
-              flex: 1,
-              padding: '6px 8px',
-              backgroundColor: 'var(--bg-tertiary)',
-              color: 'var(--text-secondary)',
-              border: '1px solid var(--border)',
-              borderRadius: '6px',
-              cursor: 'pointer',
-              fontSize: '11px',
-              fontWeight: 'bold',
-              transition: 'all 0.3s ease',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              gap: '3px'
-            }}
-          >
-            <Star size={10} />
-            Critiques
-          </button>
-        )}
           
           {isAuthenticated ? (
             <button
