@@ -61,21 +61,9 @@ class ProfileUpdateSerializer(serializers.ModelSerializer):
 
     def to_representation(self, instance):
         data = super().to_representation(instance)
-        # Pour les photos de profil, retourner l'URL si elle existe et est valide
-        # Sinon retourner null pour éviter les erreurs 404
-        if data.get('profile_picture'):
-            if not data['profile_picture'].startswith('http'):
-                request = self.context.get('request')
-                if request:
-                    full_url = f"https://{request.get_host()}{data['profile_picture']}"
-                    # Vérifier si l'URL est valide (pas de vérification HTTP pour éviter les timeouts)
-                    if 'media/profile_pictures' in full_url:
-                        data['profile_picture'] = full_url
-                    else:
-                        data['profile_picture'] = None
-                else:
-                    # Fallback pour les tests ou requêtes sans contexte
-                    data['profile_picture'] = None
+        # Forcer profile_picture à null pour éviter les erreurs 404
+        # Render.com ne conserve pas les fichiers uploadés
+        data['profile_picture'] = None
         return data
 
 class UserListSerializer(serializers.ModelSerializer):
