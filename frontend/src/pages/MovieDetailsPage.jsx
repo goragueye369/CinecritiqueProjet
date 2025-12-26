@@ -117,7 +117,13 @@ const MovieDetailsPage = () => {
         setMovieData(movieInfo);
 
         // Récupérer les critiques du film depuis l'API
-        const response = await fetch(`https://cinecritiqueprojet.onrender.com/api/reviews/movie/${encodeURIComponent(decodedTitle)}/`);
+        const token = localStorage.getItem('accessToken');
+        const response = await fetch(`https://cinecritiqueprojet.onrender.com/api/reviews/movie/${encodeURIComponent(decodedTitle)}/`, {
+          headers: {
+            'Authorization': `Bearer ${token}`,
+            'Content-Type': 'application/json',
+          }
+        });
         const data = await response.json();
         
         if (response.ok) {
