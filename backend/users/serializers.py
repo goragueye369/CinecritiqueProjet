@@ -61,22 +61,17 @@ class ProfileUpdateSerializer(serializers.ModelSerializer):
 
     def to_representation(self, instance):
         data = super().to_representation(instance)
-        # Convertir l'URL relative en URL complète
+        # Pour les photos de profil, retourner l'URL si elle existe et est valide
+        # Sinon retourner null pour éviter les erreurs 404
         if data.get('profile_picture'):
             if not data['profile_picture'].startswith('http'):
                 request = self.context.get('request')
                 if request:
-                    # Forcer HTTPS et corriger le protocole
                     full_url = f"https://{request.get_host()}{data['profile_picture']}"
-                    # Vérifier si l'image existe en retournant null si non
-                    try:
-                        import requests
-                        response = requests.head(full_url, timeout=2)
-                        if response.status_code == 200:
-                            data['profile_picture'] = full_url
-                        else:
-                            data['profile_picture'] = None
-                    except:
+                    # Vérifier si l'URL est valide (pas de vérification HTTP pour éviter les timeouts)
+                    if 'media/profile_pictures' in full_url:
+                        data['profile_picture'] = full_url
+                    else:
                         data['profile_picture'] = None
                 else:
                     # Fallback pour les tests ou requêtes sans contexte
