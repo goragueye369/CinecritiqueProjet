@@ -67,10 +67,20 @@ class ProfileUpdateSerializer(serializers.ModelSerializer):
                 request = self.context.get('request')
                 if request:
                     # Forcer HTTPS et corriger le protocole
-                    data['profile_picture'] = f"https://{request.get_host()}{data['profile_picture']}"
+                    full_url = f"https://{request.get_host()}{data['profile_picture']}"
+                    # Vérifier si l'image existe en retournant null si non
+                    try:
+                        import requests
+                        response = requests.head(full_url, timeout=2)
+                        if response.status_code == 200:
+                            data['profile_picture'] = full_url
+                        else:
+                            data['profile_picture'] = None
+                    except:
+                        data['profile_picture'] = None
                 else:
                     # Fallback pour les tests ou requêtes sans contexte
-                    data['profile_picture'] = f"https://cinecritiqueprojet.onrender.com{data['profile_picture']}"
+                    data['profile_picture'] = None
         return data
 
 class UserListSerializer(serializers.ModelSerializer):
