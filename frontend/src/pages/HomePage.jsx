@@ -336,16 +336,16 @@ const HomePage = () => {
                       alignItems: 'center',
                       gap: '10px',
                       padding: '10px 15px',
-                      backgroundColor: 'var(--bg-tertiary)',
+                      backgroundColor: '#FFD700', // Fond jaune
                       border: '1px solid var(--border)',
                       borderRadius: '8px',
                       cursor: 'pointer',
                       transition: 'all 0.3s ease'
                     }}
                   >
-                    <User size={20} />
-                    <span style={{ color: '#FFD700' }}>{user?.username || 'Utilisateur'}</span>
-                    <ChevronRight size={16} />
+                    <User size={20} style={{ color: '#fff' }} />
+                    <span style={{ color: '#fff', fontWeight: 'bold' }}>{user?.username || 'Utilisateur'}</span>
+                    <ChevronRight size={16} style={{ color: '#fff' }} />
                   </button>
                   
                   {showUserMenu && (
@@ -506,7 +506,7 @@ const HomePage = () => {
                   }}
                   style={{
                     width: '100%',
-                    padding: '15px 50px 15px 20px',
+                    padding: '12px 50px 12px 20px',
                     fontSize: '16px',
                     border: '2px solid var(--border)',
                     borderRadius: '12px',
