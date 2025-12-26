@@ -6,7 +6,7 @@ const ProfilePage = () => {
     username: '',
     bio: '',
     email: '',
-    avatar: null,
+    profile_picture: null,
     preview: null
   });
   const [isEditing, setIsEditing] = useState(false);
@@ -49,7 +49,7 @@ const ProfilePage = () => {
             username: data.username || '',
             bio: data.bio || '',
             email: data.email || '',
-            avatar: data.profile_picture || null,
+            profile_picture: data.profile_picture || null,
             date_joined: data.date_joined || null
           }));
         } else {
@@ -80,7 +80,7 @@ const ProfilePage = () => {
       reader.onloadend = () => {
         setProfile(prev => ({
           ...prev,
-          avatar: file,
+          profile_picture: file,
           preview: reader.result
         }));
       };
@@ -98,8 +98,8 @@ const ProfilePage = () => {
       const formData = new FormData();
       formData.append('username', profile.username);
       formData.append('bio', profile.bio);
-      if (profile.avatar && profile.avatar instanceof File) {
-        formData.append('profile_picture', profile.avatar);
+      if (profile.profile_picture && profile.profile_picture instanceof File) {
+        formData.append('profile_picture', profile.profile_picture);
       }
 
       const response = await fetch('https://cinecritiqueprojet.onrender.com/api/profile/', {
@@ -116,7 +116,7 @@ const ProfilePage = () => {
           ...prev, 
           username: data.username || prev.username,
           bio: data.bio || prev.bio,
-          avatar: data.profile_picture || prev.avatar,
+          profile_picture: data.profile_picture || prev.profile_picture,
           preview: null  // Réinitialiser la preview après enregistrement
         }));
         setIsEditing(false);
