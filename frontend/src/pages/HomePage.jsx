@@ -456,36 +456,8 @@ const HomePage = () => {
                 </div>
               </>
             ) : (
-              <div style={{ display: 'flex', gap: '15px' }}>
-                <Link
-                  to="/login"
-                  style={{
-                    padding: '10px 20px',
-                    backgroundColor: 'transparent',
-                    color: 'var(--text-primary)',
-                    border: '1px solid var(--border)',
-                    borderRadius: '8px',
-                    textDecoration: 'none',
-                    transition: 'all 0.3s ease'
-                  }}
-                >
-                  Connexion
-                </Link>
-                <Link
-                  to="/register"
-                  style={{
-                    padding: '10px 20px',
-                    backgroundColor: 'var(--accent)',
-                    color: '#fff',
-                    border: 'none',
-                    borderRadius: '8px',
-                    textDecoration: 'none',
-                    transition: 'all 0.3s ease'
-                  }}
-                >
-                  Inscription
-                </Link>
-              </div>
+              // Utilisateur non connecté - ne pas afficher les boutons Connexion/Inscription
+              null
             )}
           </div>
         </div>
