@@ -119,6 +119,36 @@ export const movieService = {
     return fetchFromApi(endpoints.discover, params);
   },
 
+  getTopRatedMovies: async (page = 1, filters = {}) => {
+    let params = `&page=${page}`;
+    
+    if (filters.genre) params += `&with_genres=${filters.genre}`;
+    if (filters.year) params += `&primary_release_year=${filters.year}`;
+    if (filters.minRating) params += `&vote_average.gte=${filters.minRating}`;
+    
+    return fetchFromApi('/movie/top_rated', params);
+  },
+
+  getUpcomingMovies: async (page = 1, filters = {}) => {
+    let params = `&page=${page}`;
+    
+    if (filters.genre) params += `&with_genres=${filters.genre}`;
+    if (filters.year) params += `&primary_release_year=${filters.year}`;
+    if (filters.minRating) params += `&vote_average.gte=${filters.minRating}`;
+    
+    return fetchFromApi('/movie/upcoming', params);
+  },
+
+  getNowPlayingMovies: async (page = 1, filters = {}) => {
+    let params = `&page=${page}`;
+    
+    if (filters.genre) params += `&with_genres=${filters.genre}`;
+    if (filters.year) params += `&primary_release_year=${filters.year}`;
+    if (filters.minRating) params += `&vote_average.gte=${filters.minRating}`;
+    
+    return fetchFromApi('/movie/now_playing', params);
+  },
+
   searchMovies: async (query, page = 1) => {
     return fetchFromApi(endpoints.search, `&query=${encodeURIComponent(query)}&page=${page}`);
   },
