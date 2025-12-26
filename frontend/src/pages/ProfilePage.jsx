@@ -49,7 +49,7 @@ const ProfilePage = () => {
             username: data.username || '',
             bio: data.bio || '',
             email: data.email || '',
-            profile_picture: data.profile_picture || null,
+            avatar: data.profile_picture || null,
             date_joined: data.date_joined || null
           }));
         } else {
