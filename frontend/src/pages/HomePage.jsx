@@ -530,6 +530,33 @@ const HomePage = () => {
                   gap: '8px',
                   alignItems: 'center'
                 }}>
+                  <button
+                    type="submit"
+                    style={{
+                      background: 'var(--accent)',
+                      border: 'none',
+                      borderRadius: '8px',
+                      padding: '10px 20px',
+                      cursor: 'pointer',
+                      color: '#fff',
+                      transition: 'all 0.3s ease',
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: '8px',
+                      fontWeight: '600',
+                      fontSize: '14px',
+                      height: 'fit-content'
+                    }}
+                    onMouseOver={(e) => {
+                      e.target.style.backgroundColor = '#e74c3c';
+                    }}
+                    onMouseOut={(e) => {
+                      e.target.style.backgroundColor = 'var(--accent)';
+                    }}
+                  >
+                    <Search size={16} />
+                    Rechercher
+                  </button>
                   {searchTerm && (
                     <button
                       type="button"
@@ -543,7 +570,7 @@ const HomePage = () => {
                         background: 'none',
                         border: 'none',
                         cursor: 'pointer',
-                        padding: '5px',
+                        padding: '8px',
                         borderRadius: '4px',
                         color: 'var(--text-secondary)',
                         transition: 'all 0.2s ease'
@@ -558,31 +585,6 @@ const HomePage = () => {
                       <X size={16} />
                     </button>
                   )}
-                  <button
-                    type="submit"
-                    style={{
-                      background: 'var(--accent)',
-                      border: 'none',
-                      borderRadius: '8px',
-                      padding: '8px 16px',
-                      cursor: 'pointer',
-                      color: '#fff',
-                      transition: 'all 0.3s ease',
-                      display: 'flex',
-                      alignItems: 'center',
-                      gap: '8px',
-                      fontWeight: '600'
-                    }}
-                    onMouseOver={(e) => {
-                      e.target.style.backgroundColor = '#e74c3c';
-                    }}
-                    onMouseOut={(e) => {
-                      e.target.style.backgroundColor = 'var(--accent)';
-                    }}
-                  >
-                    <Search size={18} />
-                    Rechercher
-                  </button>
                 </div>
               </div>
             </div>
