@@ -1024,6 +1024,7 @@ const MovieCard = ({ movie, onMovieClick, onWatchTrailer, onCreateReview, isAuth
           gap: '6px',
           marginTop: '10px'
         }}>
+          {isAuthenticated ? (
           <button
             onClick={(e) => onWatchTrailer(movie, e)}
             style={{
@@ -1046,12 +1047,38 @@ const MovieCard = ({ movie, onMovieClick, onWatchTrailer, onCreateReview, isAuth
             <Play size={10} />
             Bande-annonce
           </button>
+        ) : (
+          <button
+            disabled
+            style={{
+              flex: 1,
+              padding: '6px 8px',
+              backgroundColor: 'var(--bg-tertiary)',
+              color: 'var(--text-secondary)',
+              border: '1px solid var(--border)',
+              borderRadius: '6px',
+              cursor: 'not-allowed',
+              fontSize: '11px',
+              fontWeight: 'bold',
+              transition: 'all 0.3s ease',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              gap: '3px',
+              opacity: 0.5
+            }}
+          >
+            <Play size={10} />
+            Bande-annonce
+          </button>
+        )}
           
+          {isAuthenticated ? (
           <button
             onClick={(e) => {
               console.log('Bouton Critiques cliqué, isAuthenticated:', isAuthenticated);
               e.stopPropagation();
-              // Toujours permettre la navigation vers les critiques
+              // Naviguer vers la page du film
               navigate(`/movie/${encodeURIComponent(movie.title)}`);
               // Scroll vers reviews après un délai
               setTimeout(() => {
@@ -1064,8 +1091,8 @@ const MovieCard = ({ movie, onMovieClick, onWatchTrailer, onCreateReview, isAuth
             style={{
               flex: 1,
               padding: '6px 8px',
-              backgroundColor: isAuthenticated ? 'var(--bg-tertiary)' : 'var(--accent)',
-              color: isAuthenticated ? 'var(--text-primary)' : '#fff',
+              backgroundColor: 'var(--bg-tertiary)',
+              color: 'var(--text-primary)',
               border: '1px solid var(--border)',
               borderRadius: '6px',
               cursor: 'pointer',
@@ -1081,6 +1108,31 @@ const MovieCard = ({ movie, onMovieClick, onWatchTrailer, onCreateReview, isAuth
             <Star size={10} />
             Critiques
           </button>
+        ) : (
+          <button
+            disabled
+            style={{
+              flex: 1,
+              padding: '6px 8px',
+              backgroundColor: 'var(--bg-tertiary)',
+              color: 'var(--text-secondary)',
+              border: '1px solid var(--border)',
+              borderRadius: '6px',
+              cursor: 'not-allowed',
+              fontSize: '11px',
+              fontWeight: 'bold',
+              transition: 'all 0.3s ease',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              gap: '3px',
+              opacity: 0.5
+            }}
+          >
+            <Star size={10} />
+            Critiques
+          </button>
+        )}
           
           {isAuthenticated ? (
             <button
