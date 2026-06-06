@@ -1,9 +1,22 @@
 from pathlib import Path
 import os
-BASE_DIR = Path(__file__).resolve().parent.parent 
-SECRET_KEY = 'dev-key-change-later' 
-DEBUG = True 
-ALLOWED_HOSTS = ['localhost', '127.0.0.1'] 
+from dotenv import load_dotenv
+
+# Charger les variables d'environnement depuis le fichier .env
+load_dotenv(os.path.join(Path(__file__).resolve().parent.parent, '.env'))
+
+BASE_DIR = Path(__file__).resolve().parent.parent
+SECRET_KEY = os.getenv('SECRET_KEY', 'dev-key-change-later')
+DEBUG = os.getenv('DEBUG', 'True') == 'True'
+
+ALLOWED_HOSTS = [
+    'localhost',
+    '127.0.0.1',
+    'goragueye.alwaysdata.net',         # domaine AlwaysData par défaut
+    os.getenv('ALLOWED_HOST', ''),      # domaine custom via .env
+]
+ALLOWED_HOSTS = [h for h in ALLOWED_HOSTS if h]  # retire les valeurs vides
+
 INSTALLED_APPS = [
     'django.contrib.admin',
     'django.contrib.auth',
@@ -14,6 +27,7 @@ INSTALLED_APPS = [
     'corsheaders',
     'rest_framework',
     'rest_framework_simplejwt',
+    'whitenoise.runserver_nostatic',
     'api',
     'users',
     'reviews'
@@ -21,6 +35,7 @@ INSTALLED_APPS = [
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
+    'whitenoise.middleware.WhiteNoiseMiddleware',  # sert les fichiers statiques en prod
     'django.contrib.sessions.middleware.SessionMiddleware',
     'corsheaders.middleware.CorsMiddleware',
     'django.middleware.common.CommonMiddleware',
@@ -32,13 +47,19 @@ MIDDLEWARE = [
 
 # Configuration CORS
 CORS_ALLOWED_ORIGINS = [
-    "http://localhost:5173",  # URL du frontend Vite
+    "http://localhost:5173",
     "http://127.0.0.1:5173",
-    "http://localhost:5174",  # Port alternatif
+    "http://localhost:5174",
     "http://127.0.0.1:5174",
-    "http://localhost:5175",  # Port actuel
+    "http://localhost:5175",
     "http://127.0.0.1:5175",
+    "https://goragueye.alwaysdata.net",  # frontend sur AlwaysData
 ]
+
+# Ajouter le domaine frontend custom depuis .env si défini
+FRONTEND_URL = os.getenv('FRONTEND_URL', '')
+if FRONTEND_URL:
+    CORS_ALLOWED_ORIGINS.append(FRONTEND_URL)
 
 CORS_ALLOW_CREDENTIALS = True
 
@@ -114,22 +135,24 @@ SIMPLE_JWT = {
     'SLIDING_TOKEN_REFRESH_LIFETIME': timedelta(days=1),
 }
 ROOT_URLCONF = 'config.urls' 
-# Configuration de la base de données PostgreSQL
+# Configuration de la base de données (locale ou AlwaysData via .env)
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'cinecritique_db',
-        'USER': 'postgres',
-        'PASSWORD': 'postgres',
-        'HOST': 'localhost',
-        'PORT': '5432',
+        'ENGINE': os.getenv('DB_ENGINE', 'django.db.backends.postgresql'),
+        'NAME': os.getenv('DB_NAME', 'cinecritique_db'),
+        'USER': os.getenv('DB_USER', 'postgres'),
+        'PASSWORD': os.getenv('DB_PASSWORD', 'postgres'),
+        'HOST': os.getenv('DB_HOST', 'localhost'),
+        'PORT': os.getenv('DB_PORT', '5432'),
     }
-} 
+}
 LANGUAGE_CODE = 'fr-fr' 
 TIME_ZONE = 'Europe/Paris' 
 USE_I18N = True 
 USE_TZ = True 
 STATIC_URL = 'static/'
+STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')  # pour collectstatic en prod
+STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 
 # Media files (uploads)
 MEDIA_URL = '/media/'
