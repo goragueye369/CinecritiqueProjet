@@ -3,6 +3,7 @@ import { useParams, Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
 import { Star, Calendar, Clock, User, ArrowLeft, MessageSquare, Play } from 'lucide-react';
 import { movieService, getImageUrl } from '../services/apiService';
+import { API_URL } from '../config/constants';
 
 const MovieDetailsPage = () => {
   const { movieTitle } = useParams();
@@ -118,7 +119,7 @@ const MovieDetailsPage = () => {
 
         // Récupérer les critiques du film depuis l'API
         const token = localStorage.getItem('accessToken');
-        const response = await fetch(`https://cinecritiqueprojet.onrender.com/api/reviews/movie/${encodeURIComponent(decodedTitle)}/`, {
+        const response = await fetch(`${API_URL}/reviews/movie/${encodeURIComponent(decodedTitle)}/`, {
           headers: {
             'Authorization': `Bearer ${token}`,
             'Content-Type': 'application/json',

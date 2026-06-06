@@ -3,6 +3,7 @@ import { useNavigate, useSearchParams } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
 import { Star, ArrowLeft, Save, X } from 'lucide-react';
 import { movieService } from '../services/apiService';
+import { API_URL } from '../config/constants';
 
 const CreateReviewPage = () => {
   const navigate = useNavigate();
@@ -69,7 +70,7 @@ const CreateReviewPage = () => {
 
     try {
       const token = await getToken();
-      const response = await fetch('https://cinecritiqueprojet.onrender.com/api/reviews/', {
+      const response = await fetch(`${API_URL}/reviews/`, {
         method: 'POST',
         headers: {
           'Authorization': `Bearer ${token}`,

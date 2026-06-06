@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
+import { API_URL } from '../config/constants';
 
 const RegisterPage = () => {
   const [formData, setFormData] = useState({
@@ -32,7 +33,7 @@ const RegisterPage = () => {
     try {
       setLoading(true);
       
-      const response = await fetch('https://cinecritiqueprojet.onrender.com/api/register/', {
+      const response = await fetch(`${API_URL}/register/`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

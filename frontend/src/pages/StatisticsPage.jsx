@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
 import { Star, TrendingUp, Users, Film, BarChart3, Award, ArrowLeft } from 'lucide-react';
+import { API_URL } from '../config/constants';
 
 const StatisticsPage = () => {
   const { isAuthenticated } = useAuth();
@@ -14,7 +15,7 @@ const StatisticsPage = () => {
     const fetchStats = async () => {
       try {
         setLoading(true);
-        const response = await fetch('https://cinecritiqueprojet.onrender.com/api/reviews/stats/');
+        const response = await fetch(`${API_URL}/reviews/stats/`);
         
         if (!response.ok) {
           throw new Error('Erreur lors du chargement des statistiques');

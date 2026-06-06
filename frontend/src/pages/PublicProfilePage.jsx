@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { ArrowLeft, Calendar, User as UserIcon, Mail } from 'lucide-react';
+import { API_URL } from '../config/constants';
 
 const PublicProfilePage = () => {
   const { userId } = useParams();
@@ -12,7 +13,7 @@ const PublicProfilePage = () => {
   useEffect(() => {
     const fetchUserProfile = async () => {
       try {
-        const response = await fetch(`https://cinecritiqueprojet.onrender.com/api/users/${userId}/`);
+        const response = await fetch(`${API_URL}/users/${userId}/`);
         
         if (response.ok) {
           const userData = await response.json();

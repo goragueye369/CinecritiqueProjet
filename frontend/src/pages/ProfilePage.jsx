@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
+import { API_URL } from '../config/constants';
 
 const ProfilePage = () => {
   const [profile, setProfile] = useState({
@@ -29,7 +30,7 @@ const ProfilePage = () => {
           return;
         }
         
-        const response = await fetch('https://cinecritiqueprojet.onrender.com/api/profile/', {
+        const response = await fetch(`${API_URL}/profile/`, {
           headers: {
             'Authorization': `Bearer ${token}`,
             'Content-Type': 'application/json',
@@ -102,7 +103,7 @@ const ProfilePage = () => {
         formData.append('profile_picture', profile.profile_picture);
       }
 
-      const response = await fetch('https://cinecritiqueprojet.onrender.com/api/profile/', {
+      const response = await fetch(`${API_URL}/profile/`, {
         method: 'PATCH',
         headers: {
           'Authorization': `Bearer ${token}`,
