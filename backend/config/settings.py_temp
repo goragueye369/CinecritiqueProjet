@@ -1,0 +1,1 @@
+SECRET_KEY = 'django-insecure-dev-key-change-this-for-production!' 
