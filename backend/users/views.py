@@ -218,3 +218,40 @@ class UserDetailView(generics.RetrieveAPIView):
     
     def get_queryset(self):
         return User.objects.all()
+
+
+class ChangePasswordView(generics.GenericAPIView):
+    """
+    Vue pour changer le mot de passe de l'utilisateur connecté
+    """
+    permission_classes = [permissions.IsAuthenticated]
+
+    def post(self, request):
+        user = request.user
+        current_password = request.data.get('current_password')
+        new_password = request.data.get('new_password')
+
+        if not current_password or not new_password:
+            return Response(
+                {'error': 'Les champs current_password et new_password sont requis.'},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+
+        if not user.check_password(current_password):
+            return Response(
+                {'error': 'Le mot de passe actuel est incorrect.'},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+
+        if len(new_password) < 6:
+            return Response(
+                {'error': 'Le nouveau mot de passe doit contenir au moins 6 caractères.'},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+
+        user.set_password(new_password)
+        user.save()
+        return Response(
+            {'message': 'Mot de passe modifié avec succès.'},
+            status=status.HTTP_200_OK
+        )

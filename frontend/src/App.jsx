@@ -14,6 +14,7 @@ import MyReviewsPage from './pages/MyReviewsPage';
 import EditReviewPage from './pages/EditReviewPage';
 import MovieDetailsPage from './pages/MovieDetailsPage';
 import StatisticsPage from './pages/StatisticsPage';
+import ChangePasswordPage from './pages/ChangePasswordPage';
 
 const PrivateRoute = ({ children }) => {
   const { isAuthenticated } = useAuth();
@@ -77,6 +78,14 @@ function App() {
               />
               <Route path="/movie/:movieTitle" element={<MovieDetailsPage />} />
               <Route path="/statistics" element={<StatisticsPage />} />
+              <Route
+                path="/change-password"
+                element={
+                  <PrivateRoute>
+                    <ChangePasswordPage />
+                  </PrivateRoute>
+                }
+              />
               <Route path="*" element={<Navigate to="/" replace />} />
             </Routes>
           </div>

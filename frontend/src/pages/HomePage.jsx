@@ -7,7 +7,7 @@ import SearchSuggestions from '../components/SearchSuggestions';
 import MovieFilters from '../components/MovieFilters';
 
 const HomePage = () => {
-  const { isAuthenticated, user, loading } = useAuth();
+  const { isAuthenticated, user, loading, logout } = useAuth();
   const navigate = useNavigate();
   const [movies, setMovies] = useState([]);
   const [moviesLoading, setMoviesLoading] = useState(true);
@@ -384,7 +384,7 @@ const HomePage = () => {
                         Mon profil
                       </Link>
                       <Link
-                        to="/favorites"
+                        to="/my-reviews"
                         style={{
                           display: 'flex',
                           alignItems: 'center',
@@ -402,10 +402,10 @@ const HomePage = () => {
                         }}
                       >
                         <Heart size={16} />
-                        Mes favoris
+                        Mes critiques
                       </Link>
                       <Link
-                        to="/watchlist"
+                        to="/statistics"
                         style={{
                           display: 'flex',
                           alignItems: 'center',
@@ -423,7 +423,7 @@ const HomePage = () => {
                         }}
                       >
                         <Play size={16} />
-                        Ma liste de visionnage
+                        Statistiques
                       </Link>
                       <div style={{
                         height: '1px',
@@ -432,8 +432,8 @@ const HomePage = () => {
                       }} />
                       <button
                         onClick={() => {
-                          // Logique de déconnexion
-                          navigate('/login');
+                          logout();
+                          navigate('/');
                         }}
                         style={{
                           display: 'flex',
